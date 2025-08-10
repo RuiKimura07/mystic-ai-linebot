@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: mysticai-line-chat
+    runtime: node
+    region: singapore # or oregon, frankfurt, ohio
+    plan: free # or starter, standard, pro
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_LINE_CHANNEL_ID
+        sync: false
+      - key: LINE_CHANNEL_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_LINE_REDIRECT_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
