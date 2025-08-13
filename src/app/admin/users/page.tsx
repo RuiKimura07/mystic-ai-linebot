@@ -88,13 +88,13 @@ export default function AdminUsersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">名前</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">メール</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">登録日</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">残高</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">状態</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">操作</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">名前</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">メール</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">登録日</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-800">残高</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-800">状態</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-800">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -102,8 +102,8 @@ export default function AdminUsersPage() {
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-gray-900">{user.id}</td>
                     <td className="py-3 px-4 text-gray-900">{user.name}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.email}</td>
-                    <td className="py-3 px-4 text-gray-600">{user.registeredAt}</td>
+                    <td className="py-3 px-4 text-gray-800">{user.email}</td>
+                    <td className="py-3 px-4 text-gray-800">{user.registeredAt}</td>
                     <td className="py-3 px-4 text-right text-gray-900 font-semibold">
                       {user.balance.toLocaleString()} pt
                     </td>
@@ -143,7 +143,7 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="mt-6 flex justify-between items-center">
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-gray-800">
               全 {filteredUsers.length} 件
             </div>
             <div className="flex gap-2">
@@ -170,7 +170,7 @@ export default function AdminUsersPage() {
               <h2 className="text-xl font-bold text-gray-900">ユーザー詳細</h2>
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-800 hover:text-gray-800"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -181,11 +181,11 @@ export default function AdminUsersPage() {
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-gray-600">ユーザーID</label>
+                  <label className="text-sm text-gray-800">ユーザーID</label>
                   <p className="font-semibold">{selectedUser.id}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">状態</label>
+                  <label className="text-sm text-gray-800">状態</label>
                   <p className="font-semibold">
                     <span className={`inline-block px-3 py-1 rounded-full text-xs ${
                       selectedUser.status === 'active'
@@ -197,23 +197,23 @@ export default function AdminUsersPage() {
                   </p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">名前</label>
+                  <label className="text-sm text-gray-800">名前</label>
                   <p className="font-semibold">{selectedUser.name}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">メールアドレス</label>
+                  <label className="text-sm text-gray-800">メールアドレス</label>
                   <p className="font-semibold">{selectedUser.email}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">登録日</label>
+                  <label className="text-sm text-gray-800">登録日</label>
                   <p className="font-semibold">{selectedUser.registeredAt}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">最終ログイン</label>
+                  <label className="text-sm text-gray-800">最終ログイン</label>
                   <p className="font-semibold">{selectedUser.lastLogin}</p>
                 </div>
                 <div>
-                  <label className="text-sm text-gray-600">ポイント残高</label>
+                  <label className="text-sm text-gray-800">ポイント残高</label>
                   <p className="font-semibold text-lg text-blue-600">
                     {selectedUser.balance.toLocaleString()} pt
                   </p>

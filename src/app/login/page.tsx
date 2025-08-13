@@ -22,14 +22,14 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">占いの小窓</h1>
-          <p className="text-sm text-gray-600">あなたの毎日に小さな光を</p>
+          <p className="text-sm text-gray-700">あなたの毎日に小さな光を</p>
         </div>
         
         <div className="bg-white p-8 rounded-2xl shadow-xl">
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-xl font-semibold text-gray-800 mb-2">ログイン</h2>
-              <p className="text-sm text-gray-500">LINEアカウントでログインしてください</p>
+              <p className="text-sm text-gray-800">LINEアカウントでログインしてください</p>
             </div>
             
             <button
@@ -43,7 +43,7 @@ export default function LoginPage() {
             </button>
             
             <div className="text-center">
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-800">
                 ログインすることで利用規約とプライバシーポリシーに同意したものとみなします
               </p>
             </div>

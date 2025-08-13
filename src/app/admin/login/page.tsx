@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
         <div className="bg-white rounded-lg shadow-xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">管理者ログイン</h1>
-            <p className="text-sm text-gray-600 mt-2">占いの小窓 管理画面</p>
+            <p className="text-sm text-gray-800 mt-2">占いの小窓 管理画面</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -54,7 +54,7 @@ export default function AdminLoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-800 mb-2">
                 メールアドレス
               </label>
               <input
@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-800 mb-2">
                 パスワード
               </label>
               <input
@@ -89,7 +89,7 @@ export default function AdminLoginPage() {
                   type="checkbox"
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
-                <span className="ml-2 text-sm text-gray-600">ログイン状態を保持</span>
+                <span className="ml-2 text-sm text-gray-800">ログイン状態を保持</span>
               </label>
               <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
                 パスワードを忘れた
@@ -110,7 +110,7 @@ export default function AdminLoginPage() {
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-800">
               <p>セキュリティ上の注意:</p>
               <ul className="mt-2 space-y-1 text-xs">
                 <li>• 共有PCでは使用後必ずログアウトしてください</li>

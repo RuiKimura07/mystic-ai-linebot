@@ -117,7 +117,7 @@ export default function PointsPurchasePage() {
                     <span className="text-2xl font-bold text-gray-900">
                       ¥{plan.price.toLocaleString()}
                     </span>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-800">
                       (¥{(plan.price / plan.points).toFixed(1)}/pt)
                     </div>
                   </div>
@@ -132,9 +132,9 @@ export default function PointsPurchasePage() {
               <svg className="w-8 h-8" viewBox="0 0 32 32">
                 <path fill="#635BFF" d="M16 0C7.163 0 0 7.163 0 16s7.163 16 16 16 16-7.163 16-16S24.837 0 16 0zm6.5 10.5h-3c-.552 0-1 .448-1 1v1h4c.276 0 .5.224.5.5s-.224.5-.5.5h-4v6c0 .276-.224.5-.5.5s-.5-.224-.5-.5v-6h-2c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h2v-1c0-1.103.897-2 2-2h3c.276 0 .5.224.5.5s-.224.5-.5.5z"/>
               </svg>
-              <span className="text-gray-700">クレジットカード決済（Stripe）</span>
+              <span className="text-gray-800">クレジットカード決済（Stripe）</span>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-gray-800 mt-2">
               安全な決済システムを使用しています
             </p>
           </div>
@@ -151,7 +151,7 @@ export default function PointsPurchasePage() {
             {isLoading ? '処理中...' : '決済する'}
           </button>
 
-          <p className="text-xs text-gray-500 text-center mt-4">
+          <p className="text-xs text-gray-800 text-center mt-4">
             購入後のキャンセル・返金はできません
           </p>
         </div>

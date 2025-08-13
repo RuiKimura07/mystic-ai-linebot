@@ -56,7 +56,7 @@ export default function DashboardPage() {
             <h1 className="text-2xl font-bold text-gray-900">マイページ</h1>
             <button
               onClick={handleLogout}
-              className="text-gray-600 hover:text-gray-800 transition-colors"
+              className="text-gray-700 hover:text-gray-800 transition-colors"
             >
               ログアウト
             </button>
@@ -116,7 +116,7 @@ export default function DashboardPage() {
                       <div className="font-semibold text-gray-900">
                         {transaction.description}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-gray-800">
                         {transaction.date}
                       </div>
                     </div>

@@ -155,12 +155,12 @@ export default function AdminPointsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ユーザー名</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-700">残高</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">購入履歴</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">利用履歴</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-700">操作</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ユーザー名</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-800">残高</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-800">購入履歴</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-800">利用履歴</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-800">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -170,24 +170,24 @@ export default function AdminPointsPage() {
                     <td className="py-3 px-4">
                       <div>
                         <div className="font-semibold text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-600">{user.email}</div>
+                        <div className="text-sm text-gray-800">{user.email}</div>
                       </div>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="font-bold text-lg text-blue-600">
                         {user.balance.toLocaleString()} pt
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-gray-800">
                         購入: {user.totalPurchased.toLocaleString()} / 利用: {user.totalUsed.toLocaleString()}
                       </div>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="font-semibold">{user.purchaseCount}</span>
-                      <span className="text-sm text-gray-500"> 回</span>
+                      <span className="text-sm text-gray-800"> 回</span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="font-semibold">{user.usageCount}</span>
-                      <span className="text-sm text-gray-500"> 回</span>
+                      <span className="text-sm text-gray-800"> 回</span>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex justify-center gap-2">
@@ -227,17 +227,17 @@ export default function AdminPointsPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-600">対象ユーザー</label>
+                <label className="text-sm text-gray-800">対象ユーザー</label>
                 <p className="font-semibold">{selectedUser.name} (ID: {selectedUser.id})</p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-600">現在の残高</label>
+                <label className="text-sm text-gray-800">現在の残高</label>
                 <p className="font-semibold text-lg">{selectedUser.balance.toLocaleString()} pt</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
                   調整ポイント（+/-を含めて入力）
                 </label>
                 <input
@@ -250,7 +250,7 @@ export default function AdminPointsPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-800 mb-1">
                   調整理由
                 </label>
                 <textarea
@@ -292,13 +292,13 @@ export default function AdminPointsPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">取引履歴</h2>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-800 mt-1">
                   {selectedUser.name} (ID: {selectedUser.id})
                 </p>
               </div>
               <button
                 onClick={() => setShowHistoryModal(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="text-gray-800 hover:text-gray-800"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -310,16 +310,16 @@ export default function AdminPointsPage() {
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">日時</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">種別</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-700">説明</th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-700">金額</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-800">日時</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-800">種別</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-800">説明</th>
+                    <th className="text-right py-2 px-3 font-semibold text-gray-800">金額</th>
                   </tr>
                 </thead>
                 <tbody>
                   {transactions.map((transaction) => (
                     <tr key={transaction.id} className="border-b border-gray-100">
-                      <td className="py-2 px-3 text-sm text-gray-600">{transaction.date}</td>
+                      <td className="py-2 px-3 text-sm text-gray-800">{transaction.date}</td>
                       <td className="py-2 px-3">
                         <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
                           transaction.type === 'purchase'
