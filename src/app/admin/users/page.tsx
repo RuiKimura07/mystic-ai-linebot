@@ -398,7 +398,7 @@ export default function AdminUsersPage() {
             
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">並び順:</span>
+                <span className="text-sm text-gray-600">並び順:</span>
                 <select 
                   value={sortBy} 
                   onChange={(e) => setSortBy(e.target.value as any)}
@@ -423,13 +423,13 @@ export default function AdminUsersPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">名前</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">メール</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">登録日</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-800">残高</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">状態</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">操作</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">名前</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">メール</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">登録日</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700">残高</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">状態</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -437,8 +437,8 @@ export default function AdminUsersPage() {
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-gray-900">{user.id}</td>
                     <td className="py-3 px-4 text-gray-900">{user.name}</td>
-                    <td className="py-3 px-4 text-gray-700">{user.email}</td>
-                    <td className="py-3 px-4 text-gray-700">{user.registeredAt}</td>
+                    <td className="py-3 px-4 text-gray-600">{user.email}</td>
+                    <td className="py-3 px-4 text-gray-600">{user.registeredAt}</td>
                     <td className="py-3 px-4 text-right text-gray-900 font-semibold">
                       {user.balance.toLocaleString()} pt
                     </td>
@@ -494,7 +494,7 @@ export default function AdminUsersPage() {
           </div>
 
           <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-600">
               {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredUsers.length)} / 全 {filteredUsers.length} 件
             </div>
             <div className="flex gap-2">
@@ -503,7 +503,7 @@ export default function AdminUsersPage() {
                 disabled={currentPage === 1}
                 className={`px-4 py-2 border rounded transition-colors ${
                   currentPage === 1 
-                    ? 'border-gray-200 text-gray-500 cursor-not-allowed' 
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
                     : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -542,7 +542,7 @@ export default function AdminUsersPage() {
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 border rounded transition-colors ${
                   currentPage === totalPages 
-                    ? 'border-gray-200 text-gray-500 cursor-not-allowed' 
+                    ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
                     : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
@@ -561,7 +561,7 @@ export default function AdminUsersPage() {
               <h2 className="text-xl font-bold text-gray-900">ユーザー詳細</h2>
               <button
                 onClick={() => setShowDetailModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-600"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -575,38 +575,38 @@ export default function AdminUsersPage() {
                 <h3 className="text-lg font-semibold mb-3 border-b pb-2">基本情報</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-gray-700">ユーザーID</label>
+                    <label className="text-sm text-gray-600">ユーザーID</label>
                     <p className="font-semibold font-mono text-sm">{selectedUser.id}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">LINE ユーザーID</label>
+                    <label className="text-sm text-gray-600">LINE ユーザーID</label>
                     <p className="font-semibold font-mono text-xs break-all">{selectedUser.lineUserId}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">名前</label>
+                    <label className="text-sm text-gray-600">名前</label>
                     <p className="font-semibold">{selectedUser.name}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">メールアドレス</label>
+                    <label className="text-sm text-gray-600">メールアドレス</label>
                     <p className="font-semibold">{selectedUser.email}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">電話番号</label>
+                    <label className="text-sm text-gray-600">電話番号</label>
                     <p className="font-semibold">{selectedUser.phoneNumber || '未設定'}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">年齢・性別</label>
+                    <label className="text-sm text-gray-600">年齢・性別</label>
                     <p className="font-semibold">
                       {selectedUser.age ? `${selectedUser.age}歳` : '未設定'}
                       {selectedUser.gender && ` (${selectedUser.gender === 'male' ? '男性' : selectedUser.gender === 'female' ? '女性' : 'その他'})`}
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">都道府県</label>
+                    <label className="text-sm text-gray-600">都道府県</label>
                     <p className="font-semibold">{selectedUser.prefecture || '未設定'}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">状態</label>
+                    <label className="text-sm text-gray-600">状態</label>
                     <div>
                       <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
                         selectedUser.status === 'active'
@@ -631,33 +631,33 @@ export default function AdminUsersPage() {
                 <h3 className="text-lg font-semibold mb-3 border-b pb-2">アカウント情報</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-gray-700">登録日</label>
+                    <label className="text-sm text-gray-600">登録日</label>
                     <p className="font-semibold">{selectedUser.registeredAt}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">最終ログイン</label>
+                    <label className="text-sm text-gray-600">最終ログイン</label>
                     <p className="font-semibold">{selectedUser.lastLogin}</p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">現在のポイント残高</label>
+                    <label className="text-sm text-gray-600">現在のポイント残高</label>
                     <p className="font-semibold text-lg text-blue-600">
                       {selectedUser.balance.toLocaleString()} pt
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">累計購入ポイント</label>
+                    <label className="text-sm text-gray-600">累計購入ポイント</label>
                     <p className="font-semibold text-green-600">
                       {selectedUser.totalPurchased.toLocaleString()} pt
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">累計利用ポイント</label>
+                    <label className="text-sm text-gray-600">累計利用ポイント</label>
                     <p className="font-semibold text-red-600">
                       {selectedUser.totalUsed.toLocaleString()} pt
                     </p>
                   </div>
                   <div>
-                    <label className="text-sm text-gray-700">利用統計</label>
+                    <label className="text-sm text-gray-600">利用統計</label>
                     <p className="font-semibold">
                       購入{selectedUser.purchaseCount}回 / 利用{selectedUser.usageCount}回
                     </p>
@@ -684,9 +684,9 @@ export default function AdminUsersPage() {
                       <div key={index} className="flex justify-between py-2 px-3 bg-gray-50 rounded text-sm">
                         <div>
                           <div className="font-medium">{transaction.description}</div>
-                          <div className="text-xs text-gray-700">{transaction.date}</div>
+                          <div className="text-xs text-gray-600">{transaction.date}</div>
                           {transaction.paymentMethod && (
-                            <div className="text-xs text-gray-700">{transaction.paymentMethod}</div>
+                            <div className="text-xs text-gray-600">{transaction.paymentMethod}</div>
                           )}
                         </div>
                         <div className={`font-semibold ${
@@ -730,12 +730,12 @@ export default function AdminUsersPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-700">対象ユーザー</label>
+                <label className="text-sm text-gray-600">対象ユーザー</label>
                 <p className="font-semibold">{selectedUser.name} (ID: {selectedUser.id})</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">名前 *</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">名前 *</label>
                 <input
                   type="text"
                   value={editFormData.name}
@@ -745,7 +745,7 @@ export default function AdminUsersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">メールアドレス *</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">メールアドレス *</label>
                 <input
                   type="email"
                   value={editFormData.email}
@@ -755,7 +755,7 @@ export default function AdminUsersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">電話番号</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">電話番号</label>
                 <input
                   type="tel"
                   value={editFormData.phoneNumber}
@@ -766,7 +766,7 @@ export default function AdminUsersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">管理メモ</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">管理メモ</label>
                 <textarea
                   value={editFormData.notes}
                   onChange={(e) => setEditFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -803,7 +803,7 @@ export default function AdminUsersPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-700">対象ユーザー</label>
+                <label className="text-sm text-gray-600">対象ユーザー</label>
                 <p className="font-semibold">{selectedUser.name} (ID: {selectedUser.id})</p>
               </div>
               
@@ -814,7 +814,7 @@ export default function AdminUsersPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">停止理由 *</label>
+                <label className="block text-sm font-medium text-gray-600 mb-1">停止理由 *</label>
                 <textarea
                   value={suspensionReason}
                   onChange={(e) => setSuspensionReason(e.target.value)}

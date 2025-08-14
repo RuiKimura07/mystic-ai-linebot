@@ -398,7 +398,7 @@ export default function AdminPointsPage() {
             
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-700">並び順:</span>
+                <span className="text-sm text-gray-600">並び順:</span>
                 <select 
                   value={sortBy} 
                   onChange={(e) => setSortBy(e.target.value as any)}
@@ -424,13 +424,13 @@ export default function AdminPointsPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ID</th>
-                  <th className="text-left py-3 px-4 font-semibold text-gray-800">ユーザー名</th>
-                  <th className="text-right py-3 px-4 font-semibold text-gray-800">残高</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">購入履歴</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">利用履歴</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">ステータス</th>
-                  <th className="text-center py-3 px-4 font-semibold text-gray-800">操作</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ID</th>
+                  <th className="text-left py-3 px-4 font-semibold text-gray-700">ユーザー名</th>
+                  <th className="text-right py-3 px-4 font-semibold text-gray-700">残高</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">購入履歴</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">利用履歴</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">ステータス</th>
+                  <th className="text-center py-3 px-4 font-semibold text-gray-700">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -440,25 +440,25 @@ export default function AdminPointsPage() {
                     <td className="py-3 px-4">
                       <div>
                         <div className="font-semibold text-gray-900">{user.name}</div>
-                        <div className="text-sm text-gray-700">{user.email}</div>
-                        <div className="text-xs text-gray-700">最終: {user.lastTransaction}</div>
+                        <div className="text-sm text-gray-600">{user.email}</div>
+                        <div className="text-xs text-gray-600">最終: {user.lastTransaction}</div>
                       </div>
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="font-bold text-lg text-blue-600">
                         {user.balance.toLocaleString()} pt
                       </div>
-                      <div className="text-xs text-gray-700">
+                      <div className="text-xs text-gray-600">
                         購入: {user.totalPurchased.toLocaleString()} / 利用: {user.totalUsed.toLocaleString()}
                       </div>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="font-semibold">{user.purchaseCount}</span>
-                      <span className="text-sm text-gray-700"> 回</span>
+                      <span className="text-sm text-gray-600"> 回</span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className="font-semibold">{user.usageCount}</span>
-                      <span className="text-sm text-gray-700"> 回</span>
+                      <span className="text-sm text-gray-600"> 回</span>
                     </td>
                     <td className="py-3 px-4 text-center">
                       <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
@@ -499,7 +499,7 @@ export default function AdminPointsPage() {
 
           {/* ページネーション */}
           <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-700">
+            <div className="text-sm text-gray-600">
               {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredUsers.length)} / 全 {filteredUsers.length} 件
             </div>
             <div className="flex gap-2">
@@ -566,17 +566,17 @@ export default function AdminPointsPage() {
             
             <div className="space-y-4">
               <div>
-                <label className="text-sm text-gray-700">対象ユーザー</label>
+                <label className="text-sm text-gray-600">対象ユーザー</label>
                 <p className="font-semibold">{selectedUser.name} (ID: {selectedUser.id})</p>
               </div>
               
               <div>
-                <label className="text-sm text-gray-700">現在の残高</label>
+                <label className="text-sm text-gray-600">現在の残高</label>
                 <p className="font-semibold text-lg text-blue-600">{selectedUser.balance.toLocaleString()} pt</p>
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   調整ポイント（+/-を含めて入力） *
                 </label>
                 <input
@@ -587,14 +587,14 @@ export default function AdminPointsPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
                 />
                 {adjustmentAmount && (
-                  <p className="text-sm text-gray-700 mt-1">
+                  <p className="text-sm text-gray-600 mt-1">
                     調整後残高: {Math.max(0, selectedUser.balance + parseInt(adjustmentAmount.replace(/[+\-]/g, '')) * (adjustmentAmount.includes('-') ? -1 : 1)).toLocaleString()} pt
                   </p>
                 )}
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   調整理由 *
                 </label>
                 <textarea
@@ -644,7 +644,7 @@ export default function AdminPointsPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   調整ポイント（+/-を含めて入力） *
                 </label>
                 <input
@@ -657,7 +657,7 @@ export default function AdminPointsPage() {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm font-medium text-gray-600 mb-1">
                   調整理由 *
                 </label>
                 <textarea
@@ -699,13 +699,13 @@ export default function AdminPointsPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">取引履歴</h2>
-                <p className="text-sm text-gray-700 mt-1">
+                <p className="text-sm text-gray-600 mt-1">
                   {selectedUser.name} (ID: {selectedUser.id})
                 </p>
               </div>
               <button
                 onClick={() => setShowHistoryModal(false)}
-                className="text-gray-600 hover:text-gray-700"
+                className="text-gray-600 hover:text-gray-600"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -717,17 +717,17 @@ export default function AdminPointsPage() {
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">日時</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">種別</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">説明</th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-800">金額</th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-800">残高</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">日時</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">種別</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">説明</th>
+                    <th className="text-right py-2 px-3 font-semibold text-gray-700">金額</th>
+                    <th className="text-right py-2 px-3 font-semibold text-gray-700">残高</th>
                   </tr>
                 </thead>
                 <tbody>
                   {transactions.filter(t => t.userId === selectedUser.id).map((transaction) => (
                     <tr key={transaction.id} className="border-b border-gray-100">
-                      <td className="py-2 px-3 text-sm text-gray-700">{transaction.date}</td>
+                      <td className="py-2 px-3 text-sm text-gray-600">{transaction.date}</td>
                       <td className="py-2 px-3">
                         <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
                           transaction.type === 'purchase'
@@ -743,7 +743,7 @@ export default function AdminPointsPage() {
                       <td className="py-2 px-3 text-sm">
                         {transaction.description}
                         {transaction.paymentMethod && (
-                          <div className="text-xs text-gray-700 mt-1">{transaction.paymentMethod}</div>
+                          <div className="text-xs text-gray-600 mt-1">{transaction.paymentMethod}</div>
                         )}
                         {transaction.adminNote && (
                           <div className="text-xs text-orange-600 mt-1">管理者メモ: {transaction.adminNote}</div>
@@ -782,11 +782,11 @@ export default function AdminPointsPage() {
             <div className="flex justify-between items-start mb-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">全取引履歴</h2>
-                <p className="text-sm text-gray-700 mt-1">システム全体の取引履歴</p>
+                <p className="text-sm text-gray-600 mt-1">システム全体の取引履歴</p>
               </div>
               <button
                 onClick={() => setShowAllTransactionsModal(false)}
-                className="text-gray-600 hover:text-gray-700"
+                className="text-gray-600 hover:text-gray-600"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -817,7 +817,7 @@ export default function AdminPointsPage() {
                   setDateFilter('');
                   setTransactionTypeFilter('all');
                 }}
-                className="px-3 py-2 text-sm text-gray-700 hover:text-gray-800"
+                className="px-3 py-2 text-sm text-gray-600 hover:text-gray-700"
               >
                 フィルタクリア
               </button>
@@ -827,21 +827,21 @@ export default function AdminPointsPage() {
               <table className="w-full">
                 <thead className="sticky top-0 bg-white">
                   <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">日時</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">ユーザー</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">種別</th>
-                    <th className="text-left py-2 px-3 font-semibold text-gray-800">説明</th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-800">金額</th>
-                    <th className="text-right py-2 px-3 font-semibold text-gray-800">残高</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">日時</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">ユーザー</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">種別</th>
+                    <th className="text-left py-2 px-3 font-semibold text-gray-700">説明</th>
+                    <th className="text-right py-2 px-3 font-semibold text-gray-700">金額</th>
+                    <th className="text-right py-2 px-3 font-semibold text-gray-700">残高</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredTransactions.slice().reverse().map((transaction) => (
                     <tr key={transaction.id} className="border-b border-gray-100 hover:bg-gray-50">
-                      <td className="py-2 px-3 text-sm text-gray-700">{transaction.date}</td>
+                      <td className="py-2 px-3 text-sm text-gray-600">{transaction.date}</td>
                       <td className="py-2 px-3 text-sm">
                         <div className="font-medium text-gray-900">{transaction.userName}</div>
-                        <div className="text-xs text-gray-700">ID: {transaction.userId}</div>
+                        <div className="text-xs text-gray-600">ID: {transaction.userId}</div>
                       </td>
                       <td className="py-2 px-3">
                         <span className={`inline-block px-2 py-1 rounded text-xs font-semibold ${
@@ -858,7 +858,7 @@ export default function AdminPointsPage() {
                       <td className="py-2 px-3 text-sm">
                         {transaction.description}
                         {transaction.paymentMethod && (
-                          <div className="text-xs text-gray-700 mt-1">{transaction.paymentMethod}</div>
+                          <div className="text-xs text-gray-600 mt-1">{transaction.paymentMethod}</div>
                         )}
                         {transaction.adminNote && (
                           <div className="text-xs text-orange-600 mt-1">管理者メモ: {transaction.adminNote}</div>
@@ -879,7 +879,7 @@ export default function AdminPointsPage() {
             </div>
 
             <div className="flex justify-between items-center mt-4 pt-4 border-t">
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-gray-600">
                 表示中: {filteredTransactions.length} 件
               </div>
               <div className="flex gap-2">

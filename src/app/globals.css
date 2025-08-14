@@ -20,6 +20,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@layer base {
+  /* デフォルトのテキスト色を濃くする */
+  p, span, div, td, th, label {
+    @apply text-gray-800;
+  }
+  
+  /* 見出しはさらに濃く */
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-gray-900;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
