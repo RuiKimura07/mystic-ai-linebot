@@ -15,7 +15,6 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoading(true);
 
-<<<<<<< HEAD
     // デモモード：任意のメール/パスワードで管理者としてログイン
     if (email && password) {
       const mockAdmin = {
@@ -32,26 +31,6 @@ export default function AdminLoginPage() {
       }, 500);
     } else {
       setError('メールアドレスとパスワードを入力してください');
-=======
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        router.push('/admin/dashboard');
-      } else {
-        const data = await response.json();
-        setError(data.error || 'ログインに失敗しました');
-      }
-    } catch (error) {
-      setError('ログイン処理中にエラーが発生しました');
-    } finally {
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
       setIsLoading(false);
     }
   };
@@ -62,11 +41,7 @@ export default function AdminLoginPage() {
         <div className="bg-white rounded-lg shadow-xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900">管理者ログイン</h1>
-<<<<<<< HEAD
             <p className="text-sm text-gray-700 mt-2">占いの小窓 管理画面</p>
-=======
-            <p className="text-sm text-gray-800 mt-2">占いの小窓 管理画面</p>
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -112,11 +87,7 @@ export default function AdminLoginPage() {
                   type="checkbox"
                   className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
-<<<<<<< HEAD
                 <span className="ml-2 text-sm text-gray-700">ログイン状態を保持</span>
-=======
-                <span className="ml-2 text-sm text-gray-800">ログイン状態を保持</span>
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
               </label>
               <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
                 パスワードを忘れた
@@ -137,11 +108,7 @@ export default function AdminLoginPage() {
           </form>
 
           <div className="mt-8 pt-6 border-t border-gray-200">
-<<<<<<< HEAD
             <div className="text-center text-sm text-gray-700">
-=======
-            <div className="text-center text-sm text-gray-800">
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
               <p>セキュリティ上の注意:</p>
               <ul className="mt-2 space-y-1 text-xs">
                 <li>• 共有PCでは使用後必ずログアウトしてください</li>
@@ -149,7 +116,6 @@ export default function AdminLoginPage() {
                 <li>• 不審なアクセスを発見した場合は管理者に連絡してください</li>
               </ul>
             </div>
-<<<<<<< HEAD
             
             {/* デモモード表示 */}
             <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -157,8 +123,6 @@ export default function AdminLoginPage() {
                 デモモード：任意のメール/パスワードでログインできます
               </p>
             </div>
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
           </div>
         </div>
       </div>

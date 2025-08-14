@@ -30,14 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-<<<<<<< HEAD
 # env files - 開発用のローカル環境変数のみ除外
 .env*.local
 .env.production
-=======
-# env files (can opt-in for committing if needed)
-.env*
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 !.env.example
 
 # vercel
@@ -47,7 +42,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-<<<<<<< HEAD
 # IDE
 .vscode/
 .idea/
@@ -60,7 +54,3 @@ Thumbs.db
 *.private.*
 
 /src/generated/prisma
-=======
-# serena
-.serena/
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d

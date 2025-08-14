@@ -11,26 +11,19 @@ interface UserPoints {
   totalUsed: number;
   purchaseCount: number;
   usageCount: number;
-<<<<<<< HEAD
   status: 'active' | 'suspended';
   lastTransaction: string;
   registeredAt: string;
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 }
 
 interface Transaction {
   id: string;
-<<<<<<< HEAD
   userId: string;
   userName: string;
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
   date: string;
   type: 'purchase' | 'usage' | 'adjustment';
   amount: number;
   description: string;
-<<<<<<< HEAD
   paymentMethod?: string;
   adminNote?: string;
   balanceAfter: number;
@@ -41,13 +34,10 @@ interface PointAdjustment {
   amount: number;
   reason: string;
   adminId: string;
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 }
 
 export default function AdminPointsPage() {
   const [searchQuery, setSearchQuery] = useState('');
-<<<<<<< HEAD
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
   const [sortBy, setSortBy] = useState<'balance' | 'totalPurchased' | 'totalUsed' | 'lastTransaction'>('balance');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -66,15 +56,6 @@ export default function AdminPointsPage() {
   const [transactionTypeFilter, setTransactionTypeFilter] = useState<'all' | 'purchase' | 'usage' | 'adjustment'>('all');
 
   const [users, setUsers] = useState<UserPoints[]>([
-=======
-  const [selectedUser, setSelectedUser] = useState<UserPoints | null>(null);
-  const [showAdjustModal, setShowAdjustModal] = useState(false);
-  const [showHistoryModal, setShowHistoryModal] = useState(false);
-  const [adjustmentAmount, setAdjustmentAmount] = useState('');
-  const [adjustmentReason, setAdjustmentReason] = useState('');
-
-  const [users] = useState<UserPoints[]>([
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     {
       id: '1',
       name: '山田太郎',
@@ -82,23 +63,17 @@ export default function AdminPointsPage() {
       balance: 1200,
       totalPurchased: 5000,
       totalUsed: 3800,
-<<<<<<< HEAD
       purchaseCount: 8,
       usageCount: 12,
       status: 'active',
       lastTransaction: '2025/08/10 15:30',
       registeredAt: '2025/08/01'
-=======
-      purchaseCount: 5,
-      usageCount: 3,
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '2',
       name: '佐藤花子',
       email: 'sato@example.com',
       balance: 500,
-<<<<<<< HEAD
       totalPurchased: 3000,
       totalUsed: 2500,
       purchaseCount: 3,
@@ -106,19 +81,12 @@ export default function AdminPointsPage() {
       status: 'suspended',
       lastTransaction: '2025/08/09 10:15',
       registeredAt: '2025/08/02'
-=======
-      totalPurchased: 2000,
-      totalUsed: 1500,
-      purchaseCount: 2,
-      usageCount: 1,
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '3',
       name: '鈴木一郎',
       email: 'suzuki@example.com',
       balance: 3500,
-<<<<<<< HEAD
       totalPurchased: 10000,
       totalUsed: 6500,
       purchaseCount: 15,
@@ -231,44 +199,6 @@ export default function AdminPointsPage() {
       t.type === transactionTypeFilter
     );
   }
-=======
-      totalPurchased: 8000,
-      totalUsed: 4500,
-      purchaseCount: 7,
-      usageCount: 5,
-    },
-  ]);
-
-  const [transactions] = useState<Transaction[]>([
-    {
-      id: '1',
-      date: '2025/08/10 15:30',
-      type: 'purchase',
-      amount: 3000,
-      description: 'クレジットカード購入',
-    },
-    {
-      id: '2',
-      date: '2025/08/09 10:15',
-      type: 'usage',
-      amount: -500,
-      description: '占いチャット利用',
-    },
-    {
-      id: '3',
-      date: '2025/08/08 14:20',
-      type: 'adjustment',
-      amount: 100,
-      description: 'システムエラー補償',
-    },
-  ]);
-
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.id.includes(searchQuery)
-  );
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 
   const handleAdjustBalance = () => {
     if (!selectedUser || !adjustmentAmount || !adjustmentReason) {
@@ -276,7 +206,6 @@ export default function AdminPointsPage() {
       return;
     }
     
-<<<<<<< HEAD
     const amount = parseInt(adjustmentAmount.replace(/[+\-]/g, ''));
     const isNegative = adjustmentAmount.includes('-');
     const finalAmount = isNegative ? -amount : amount;
@@ -383,22 +312,10 @@ export default function AdminPointsPage() {
     link.href = URL.createObjectURL(blob);
     link.download = `point_transactions_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-=======
-    console.log('Adjust balance:', {
-      userId: selectedUser.id,
-      amount: adjustmentAmount,
-      reason: adjustmentReason,
-    });
-    
-    setShowAdjustModal(false);
-    setAdjustmentAmount('');
-    setAdjustmentReason('');
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4">
-<<<<<<< HEAD
       <div className="max-w-7xl mx-auto space-y-6">
         {/* ヘッダー */}
         <div className="bg-white rounded-lg shadow-xl p-6">
@@ -422,33 +339,12 @@ export default function AdminPointsPage() {
                 className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
               >
                 CSV出力
-=======
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">ポイント管理</h1>
-
-          <div className="mb-6">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="ユーザー名 / メールアドレス / IDで検索"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-              <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
-                検索
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
               </button>
             </div>
           </div>
 
-<<<<<<< HEAD
           {/* 統計情報 */}
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-=======
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
             <div className="bg-blue-50 rounded-lg p-4">
               <div className="text-sm text-blue-600 mb-1">総ポイント残高</div>
               <div className="text-2xl font-bold text-blue-900">
@@ -456,7 +352,6 @@ export default function AdminPointsPage() {
               </div>
             </div>
             <div className="bg-green-50 rounded-lg p-4">
-<<<<<<< HEAD
               <div className="text-sm text-green-600 mb-1">累計購入総額</div>
               <div className="text-2xl font-bold text-green-900">
                 {users.reduce((sum, user) => sum + user.totalPurchased, 0).toLocaleString()} pt
@@ -520,17 +415,6 @@ export default function AdminPointsPage() {
                 >
                   {sortOrder === 'asc' ? '昇順 ↑' : '降順 ↓'}
                 </button>
-=======
-              <div className="text-sm text-green-600 mb-1">今月の購入総額</div>
-              <div className="text-2xl font-bold text-green-900">
-                ¥{(15000).toLocaleString()}
-              </div>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <div className="text-sm text-purple-600 mb-1">今月の利用総額</div>
-              <div className="text-2xl font-bold text-purple-900">
-                {(8000).toLocaleString()} pt
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
               </div>
             </div>
           </div>

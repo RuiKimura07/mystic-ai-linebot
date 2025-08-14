@@ -10,7 +10,6 @@ interface User {
   balance: number;
   status: 'active' | 'suspended';
   lastLogin: string;
-<<<<<<< HEAD
   lineUserId: string;
   phoneNumber?: string;
   age?: number;
@@ -41,13 +40,10 @@ interface EditUserFormData {
   email: string;
   phoneNumber: string;
   notes: string;
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 }
 
 export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
-<<<<<<< HEAD
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'registeredAt' | 'lastLogin' | 'balance'>('registeredAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -66,12 +62,6 @@ export default function AdminUsersPage() {
   });
   
   const [users, setUsers] = useState<User[]>([
-=======
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  
-  const [users] = useState<User[]>([
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     {
       id: '1',
       name: '山田太郎',
@@ -80,7 +70,6 @@ export default function AdminUsersPage() {
       balance: 1200,
       status: 'active',
       lastLogin: '2025/08/10 15:30',
-<<<<<<< HEAD
       lineUserId: 'U1234567890abcdef1234567890abcdef',
       phoneNumber: '090-1234-5678',
       age: 28,
@@ -92,8 +81,6 @@ export default function AdminUsersPage() {
       usageCount: 12,
       profileImageUrl: '',
       notes: 'VIPユーザー。定期的に利用している。'
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '2',
@@ -103,7 +90,6 @@ export default function AdminUsersPage() {
       balance: 500,
       status: 'suspended',
       lastLogin: '2025/08/09 10:15',
-<<<<<<< HEAD
       lineUserId: 'U0987654321fedcba0987654321fedcba',
       phoneNumber: '080-9876-5432',
       age: 35,
@@ -117,8 +103,6 @@ export default function AdminUsersPage() {
       suspendedAt: '2025/08/05',
       profileImageUrl: '',
       notes: '警告履歴あり。要注意ユーザー。'
-=======
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '3',
@@ -128,7 +112,6 @@ export default function AdminUsersPage() {
       balance: 3500,
       status: 'active',
       lastLogin: '2025/08/10 09:45',
-<<<<<<< HEAD
       lineUserId: 'U1122334455667788991122334455667',
       phoneNumber: '070-5555-1111',
       age: 42,
@@ -349,20 +332,6 @@ export default function AdminUsersPage() {
     link.href = URL.createObjectURL(blob);
     link.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-=======
-    },
-  ]);
-
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.id.includes(searchQuery)
-  );
-
-  const handleToggleStatus = (userId: string) => {
-    console.log('Toggle status for user:', userId);
-    // API call to toggle user status
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
   };
 
   const handleShowDetail = (user: User) => {
@@ -376,7 +345,6 @@ export default function AdminUsersPage() {
         <div className="bg-white rounded-lg shadow-xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザー管理</h1>
 
-<<<<<<< HEAD
           {/* 統計情報 */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-blue-50 rounded-lg p-4">
@@ -449,21 +417,6 @@ export default function AdminUsersPage() {
                 </button>
               </div>
             </div>
-=======
-          <div className="mb-6">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                placeholder="ユーザー名 / メールアドレス / IDで検索"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-              />
-              <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
-                検索
-              </button>
-            </div>
->>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
           </div>
 
           <div className="overflow-x-auto">
