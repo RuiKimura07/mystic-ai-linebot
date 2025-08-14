@@ -10,6 +10,7 @@ interface User {
   balance: number;
   status: 'active' | 'suspended';
   lastLogin: string;
+<<<<<<< HEAD
   lineUserId: string;
   phoneNumber?: string;
   age?: number;
@@ -40,10 +41,13 @@ interface EditUserFormData {
   email: string;
   phoneNumber: string;
   notes: string;
+=======
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
 }
 
 export default function AdminUsersPage() {
   const [searchQuery, setSearchQuery] = useState('');
+<<<<<<< HEAD
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
   const [sortBy, setSortBy] = useState<'name' | 'registeredAt' | 'lastLogin' | 'balance'>('registeredAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
@@ -62,6 +66,12 @@ export default function AdminUsersPage() {
   });
   
   const [users, setUsers] = useState<User[]>([
+=======
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  
+  const [users] = useState<User[]>([
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     {
       id: '1',
       name: '山田太郎',
@@ -70,6 +80,7 @@ export default function AdminUsersPage() {
       balance: 1200,
       status: 'active',
       lastLogin: '2025/08/10 15:30',
+<<<<<<< HEAD
       lineUserId: 'U1234567890abcdef1234567890abcdef',
       phoneNumber: '090-1234-5678',
       age: 28,
@@ -81,6 +92,8 @@ export default function AdminUsersPage() {
       usageCount: 12,
       profileImageUrl: '',
       notes: 'VIPユーザー。定期的に利用している。'
+=======
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '2',
@@ -90,6 +103,7 @@ export default function AdminUsersPage() {
       balance: 500,
       status: 'suspended',
       lastLogin: '2025/08/09 10:15',
+<<<<<<< HEAD
       lineUserId: 'U0987654321fedcba0987654321fedcba',
       phoneNumber: '080-9876-5432',
       age: 35,
@@ -103,6 +117,8 @@ export default function AdminUsersPage() {
       suspendedAt: '2025/08/05',
       profileImageUrl: '',
       notes: '警告履歴あり。要注意ユーザー。'
+=======
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     },
     {
       id: '3',
@@ -112,6 +128,7 @@ export default function AdminUsersPage() {
       balance: 3500,
       status: 'active',
       lastLogin: '2025/08/10 09:45',
+<<<<<<< HEAD
       lineUserId: 'U1122334455667788991122334455667',
       phoneNumber: '070-5555-1111',
       age: 42,
@@ -332,6 +349,20 @@ export default function AdminUsersPage() {
     link.href = URL.createObjectURL(blob);
     link.download = `users_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
+=======
+    },
+  ]);
+
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.id.includes(searchQuery)
+  );
+
+  const handleToggleStatus = (userId: string) => {
+    console.log('Toggle status for user:', userId);
+    // API call to toggle user status
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
   };
 
   const handleShowDetail = (user: User) => {
@@ -345,6 +376,7 @@ export default function AdminUsersPage() {
         <div className="bg-white rounded-lg shadow-xl p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザー管理</h1>
 
+<<<<<<< HEAD
           {/* 統計情報 */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
             <div className="bg-blue-50 rounded-lg p-4">
@@ -417,6 +449,21 @@ export default function AdminUsersPage() {
                 </button>
               </div>
             </div>
+=======
+          <div className="mb-6">
+            <div className="flex gap-4">
+              <input
+                type="text"
+                placeholder="ユーザー名 / メールアドレス / IDで検索"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              />
+              <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors">
+                検索
+              </button>
+            </div>
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
           </div>
 
           <div className="overflow-x-auto">
@@ -433,12 +480,21 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody>
+<<<<<<< HEAD
                 {paginatedUsers.map((user) => (
                   <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="py-3 px-4 text-gray-900">{user.id}</td>
                     <td className="py-3 px-4 text-gray-900">{user.name}</td>
                     <td className="py-3 px-4 text-gray-700">{user.email}</td>
                     <td className="py-3 px-4 text-gray-700">{user.registeredAt}</td>
+=======
+                {filteredUsers.map((user) => (
+                  <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                    <td className="py-3 px-4 text-gray-900">{user.id}</td>
+                    <td className="py-3 px-4 text-gray-900">{user.name}</td>
+                    <td className="py-3 px-4 text-gray-800">{user.email}</td>
+                    <td className="py-3 px-4 text-gray-800">{user.registeredAt}</td>
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                     <td className="py-3 px-4 text-right text-gray-900 font-semibold">
                       {user.balance.toLocaleString()} pt
                     </td>
@@ -452,15 +508,23 @@ export default function AdminUsersPage() {
                       </span>
                     </td>
                     <td className="py-3 px-4">
+<<<<<<< HEAD
                       <div className="flex justify-center gap-1">
                         <button
                           onClick={() => handleShowDetail(user)}
                           className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
                           title="詳細を表示"
+=======
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() => handleShowDetail(user)}
+                          className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                         >
                           詳細
                         </button>
                         <button
+<<<<<<< HEAD
                           onClick={() => handleEditUser(user)}
                           className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
                           title="編集"
@@ -485,6 +549,17 @@ export default function AdminUsersPage() {
                         >
                           削除
                         </button>
+=======
+                          onClick={() => handleToggleStatus(user.id)}
+                          className={`px-3 py-1 text-white text-sm rounded transition-colors ${
+                            user.status === 'active'
+                              ? 'bg-red-600 hover:bg-red-700'
+                              : 'bg-green-600 hover:bg-green-700'
+                          }`}
+                        >
+                          {user.status === 'active' ? '停止' : '解除'}
+                        </button>
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                       </div>
                     </td>
                   </tr>
@@ -493,6 +568,7 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
+<<<<<<< HEAD
           <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="text-sm text-gray-700">
               {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredUsers.length)} / 全 {filteredUsers.length} 件
@@ -546,6 +622,21 @@ export default function AdminUsersPage() {
                     : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
+=======
+          <div className="mt-6 flex justify-between items-center">
+            <div className="text-sm text-gray-800">
+              全 {filteredUsers.length} 件
+            </div>
+            <div className="flex gap-2">
+              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                前へ
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded">1</button>
+              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+                2
+              </button>
+              <button className="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors">
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                 次へ
               </button>
             </div>
@@ -556,12 +647,20 @@ export default function AdminUsersPage() {
       {/* Detail Modal */}
       {showDetailModal && selectedUser && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+<<<<<<< HEAD
           <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6">
+=======
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6">
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-xl font-bold text-gray-900">ユーザー詳細</h2>
               <button
                 onClick={() => setShowDetailModal(false)}
+<<<<<<< HEAD
                 className="text-gray-500 hover:text-gray-700"
+=======
+                className="text-gray-800 hover:text-gray-800"
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -569,6 +668,7 @@ export default function AdminUsersPage() {
               </button>
             </div>
 
+<<<<<<< HEAD
             <div className="space-y-6">
               {/* 基本情報 */}
               <div>
@@ -696,17 +796,76 @@ export default function AdminUsersPage() {
                         </div>
                       </div>
                     ))}
+=======
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-gray-800">ユーザーID</label>
+                  <p className="font-semibold">{selectedUser.id}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">状態</label>
+                  <p className="font-semibold">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs ${
+                      selectedUser.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      {selectedUser.status === 'active' ? '有効' : '停止'}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">名前</label>
+                  <p className="font-semibold">{selectedUser.name}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">メールアドレス</label>
+                  <p className="font-semibold">{selectedUser.email}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">登録日</label>
+                  <p className="font-semibold">{selectedUser.registeredAt}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">最終ログイン</label>
+                  <p className="font-semibold">{selectedUser.lastLogin}</p>
+                </div>
+                <div>
+                  <label className="text-sm text-gray-800">ポイント残高</label>
+                  <p className="font-semibold text-lg text-blue-600">
+                    {selectedUser.balance.toLocaleString()} pt
+                  </p>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t">
+                <h3 className="font-semibold mb-2">最近の取引</h3>
+                <div className="space-y-2">
+                  <div className="flex justify-between py-2 border-b">
+                    <span>2025/08/10 - ポイント購入</span>
+                    <span className="text-green-600">+1000 pt</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b">
+                    <span>2025/08/09 - 占いチャット利用</span>
+                    <span className="text-red-600">-500 pt</span>
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                   </div>
                 </div>
               </div>
 
+<<<<<<< HEAD
               <div className="flex justify-end gap-3 pt-4 border-t">
+=======
+              <div className="flex justify-end gap-3 pt-4">
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                 <button
                   onClick={() => setShowDetailModal(false)}
                   className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                 >
                   閉じる
                 </button>
+<<<<<<< HEAD
                 <button 
                   onClick={() => {
                     setShowDetailModal(false);
@@ -714,6 +873,9 @@ export default function AdminUsersPage() {
                   }}
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
+=======
+                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
                   編集
                 </button>
               </div>
@@ -721,6 +883,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+<<<<<<< HEAD
 
       {/* Edit Modal */}
       {showEditModal && selectedUser && (
@@ -845,6 +1008,8 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+=======
+>>>>>>> 1dcfe17880d6c3c99c4bdce410965f224500cc3d
     </div>
   );
 }
