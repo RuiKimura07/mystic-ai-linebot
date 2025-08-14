@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  lineId        String    @unique
+  displayName   String
+  pictureUrl    String?
+  statusMessage String?
+  points        Int       @default(0)
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  transactions  Transaction[]
+  chats         Chat[]
+  
+  @@index([lineId])
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  password     String
+  name         String
+  role         String    @default("admin")
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  
+  @@index([username])
+}
+
+model Transaction {
+  id            String    @id @default(cuid())
+  userId        String
+  type          String    // 'purchase', 'consume', 'refund', 'admin_adjust'
+  amount        Int
+  balance       Int
+  description   String?
+  stripeSessionId String?
+  status        String    @default("pending") // 'pending', 'completed', 'failed', 'cancelled'
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([stripeSessionId])
+}
+
+model Chat {
+  id            String    @id @default(cuid())
+  userId        String
+  fortuneTellerId String?
+  messageType   String    // 'user', 'fortune_teller'
+  message       String    @db.Text
+  pointsUsed    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  
+  user          User      @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model PointPlan {
+  id            String    @id @default(cuid())
+  name          String
+  points        Int
+  price         Int       // in cents
+  stripePriceId String?
+  isActive      Boolean   @default(true)
+  displayOrder  Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([isActive])
+}

@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: mysticai-line-chat
+    runtime: node
+    region: singapore # 日本に最も近いリージョン
+    plan: starter # 本番運用には有料プランを推奨
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    
+    # ヘルスチェック設定
+    healthCheckPath: /api/health
+    
+    envVars:
+      - key: NODE_ENV
+        value: production
+      
+      # LINE Login API設定（ユーザー認証用）
+      - key: NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID
+        sync: false
+      - key: LINE_LOGIN_CHANNEL_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_LINE_REDIRECT_URI
+        sync: false
+        
+      # LINE Messaging API設定（チャット・通知用）
+      - key: LINE_MESSAGING_CHANNEL_SECRET
+        sync: false  
+      - key: LINE_MESSAGING_CHANNEL_ACCESS_TOKEN
+        sync: false
+      
+      # JWT設定
+      - key: JWT_SECRET
+        generateValue: true
+      
+      # Stripe設定
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      
+      # アプリケーション設定
+      - key: NEXT_PUBLIC_APP_URL
+        sync: false
