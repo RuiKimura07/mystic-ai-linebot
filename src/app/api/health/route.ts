@@ -1,39 +1,51 @@
 import { NextResponse } from 'next/server';
+import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 
 export async function GET() {
   try {
-    // 基本的なヘルスチェック
-    const status = {
+    const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      environment: process.env.NODE_ENV || 'development',
       version: process.env.npm_package_version || '1.0.0',
+      environment: env.NODE_ENV,
+      demoMode: env.DEMO_MODE,
       services: {
+        app: 'operational',
         line: {
-          configured: !!(process.env.LINE_CHANNEL_SECRET && process.env.NEXT_PUBLIC_LINE_CHANNEL_ID),
-          status: 'available'
+          configured: !!(env.LINE_CHANNEL_SECRET && env.LINE_CHANNEL_ID),
+          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
         },
         stripe: {
-          configured: !!(process.env.STRIPE_SECRET_KEY && process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY),
-          status: 'available'
+          configured: !!(env.STRIPE_SECRET_KEY && env.STRIPE_PUBLISHABLE_KEY),
+          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
         },
         jwt: {
-          configured: !!process.env.JWT_SECRET,
-          status: 'available'
+          configured: !!env.JWT_SECRET,
+          status: 'operational'
         }
-      }
-    };
-
-    return NextResponse.json(status, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { 
-        status: 'unhealthy', 
-        error: 'Health check failed',
-        timestamp: new Date().toISOString()
       },
-      { status: 500 }
+      memory: {
+        used: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+        total: Math.round(process.memoryUsage().heapTotal / 1024 / 1024),
+        unit: 'MB'
+      },
+      uptime: Math.round(process.uptime()),
+    };
+    
+    logger.debug('Health check performed', health);
+    
+    return NextResponse.json(health, { status: 200 });
+  } catch (error) {
+    logger.error('Health check failed', error);
+    
+    return NextResponse.json(
+      {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        error: 'Health check failed'
+      },
+      { status: 503 }
     );
   }
 }
