@@ -12,8 +12,16 @@ export async function GET() {
       demoMode: env.DEMO_MODE,
       services: {
         app: 'operational',
-        line: {
-          configured: !!(env.LINE_CHANNEL_SECRET && env.LINE_CHANNEL_ID),
+        database: {
+          configured: !!env.DATABASE_URL,
+          status: env.DATABASE_URL ? 'operational' : 'not_configured'
+        },
+        lineLogin: {
+          configured: !!(env.LINE_LOGIN_CHANNEL_SECRET && env.LINE_LOGIN_CHANNEL_ID),
+          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
+        },
+        lineMessaging: {
+          configured: !!(env.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN && env.LINE_MESSAGING_CHANNEL_SECRET),
           status: env.DEMO_MODE ? 'demo_mode' : 'operational'
         },
         stripe: {

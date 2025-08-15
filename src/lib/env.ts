@@ -3,12 +3,19 @@ export const env = {
   // アプリケーション設定
   NODE_ENV: process.env.NODE_ENV || 'development',
   APP_URL: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+  PORT: process.env.PORT || '3000',
   
-  // LINE設定
-  LINE_CHANNEL_ID: process.env.NEXT_PUBLIC_LINE_CHANNEL_ID || '',
-  LINE_CHANNEL_SECRET: process.env.LINE_CHANNEL_SECRET || '',
+  // データベース設定
+  DATABASE_URL: process.env.DATABASE_URL || '',
+  
+  // LINE Login設定
+  LINE_LOGIN_CHANNEL_ID: process.env.NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID || process.env.NEXT_PUBLIC_LINE_CHANNEL_ID || '',
+  LINE_LOGIN_CHANNEL_SECRET: process.env.LINE_LOGIN_CHANNEL_SECRET || process.env.LINE_CHANNEL_SECRET || '',
   LINE_REDIRECT_URI: process.env.NEXT_PUBLIC_LINE_REDIRECT_URI || '',
+  
+  // LINE Messaging API設定
   LINE_MESSAGING_CHANNEL_ACCESS_TOKEN: process.env.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN || '',
+  LINE_MESSAGING_CHANNEL_SECRET: process.env.LINE_MESSAGING_CHANNEL_SECRET || '',
   
   // JWT設定
   JWT_SECRET: process.env.JWT_SECRET || 'default-secret-key-change-in-production',
@@ -24,10 +31,10 @@ export const env = {
   
   // セキュリティ設定
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'admin123',
-  SESSION_SECRET: process.env.SESSION_SECRET || 'session-secret-key-change-in-production',
+  SESSION_SECRET: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'session-secret-key-change-in-production',
   
   // デモモード
-  DEMO_MODE: process.env.DEMO_MODE === 'true',
+  DEMO_MODE: process.env.DEMO_MODE === 'true' || false,
 } as const;
 
 // 必須環境変数のチェック
