@@ -100,12 +100,11 @@ export async function POST(request: NextRequest) {
     });
     
     const cookieOptions = {
-      httpOnly: false, // 一時的にfalseでデバッグ
+      httpOnly: true,
       secure: env.NODE_ENV === 'production',
       sameSite: env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 60 * 60 * 8, // 8 hours
-      path: '/', // パスをルートに変更
-      domain: env.NODE_ENV === 'production' ? undefined : undefined, // Let browser set domain
+      path: '/',
     };
     
     response.cookies.set('admin-token', token, cookieOptions);
