@@ -11,11 +11,13 @@ export async function GET(request: NextRequest) {
     const state = searchParams.get('state');
     const error = searchParams.get('error');
     
-    logger.info('Redirecting LINE callback from /auth/callback to /api/auth/callback/line', {
+    logger.warn('Incorrect LINE callback URL used', {
+      receivedUrl: request.url,
+      correctUrl: '/api/auth/callback/line',
       code: !!code,
       state: !!state,
       error,
-      fullUrl: request.url,
+      message: 'Please update LINE_REDIRECT_URI environment variable and LINE console settings',
     });
     
     // Build the correct callback URL with all parameters
