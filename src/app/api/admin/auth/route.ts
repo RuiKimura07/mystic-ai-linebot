@@ -102,9 +102,10 @@ export async function POST(request: NextRequest) {
     const cookieOptions = {
       httpOnly: false, // 一時的にfalseでデバッグ
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
+      sameSite: env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 60 * 60 * 8, // 8 hours
       path: '/', // パスをルートに変更
+      domain: env.NODE_ENV === 'production' ? undefined : undefined, // Let browser set domain
     };
     
     response.cookies.set('admin-token', token, cookieOptions);
@@ -112,7 +113,18 @@ export async function POST(request: NextRequest) {
     logger.info('Setting admin cookie', { 
       cookieOptions,
       tokenLength: token.length,
-      userId: user.id 
+      userId: user.id,
+      nodeEnv: env.NODE_ENV,
+      cookieName: 'admin-token'
+    });
+    
+    // Additional debug logging
+    console.log('Cookie setting debug:', {
+      secure: cookieOptions.secure,
+      sameSite: cookieOptions.sameSite,
+      httpOnly: cookieOptions.httpOnly,
+      path: cookieOptions.path,
+      maxAge: cookieOptions.maxAge
     });
     
     logger.info('Admin user logged in successfully', {

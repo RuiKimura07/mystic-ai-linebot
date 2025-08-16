@@ -6,8 +6,21 @@ import { logger } from '@/lib/logger';
 export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('admin-token')?.value;
+    const allCookies = request.cookies.getAll();
     
-    logger.info('Admin auth check', { hasToken: !!token });
+    logger.info('Admin auth check', { 
+      hasToken: !!token,
+      tokenLength: token?.length,
+      allCookieNames: allCookies.map(c => c.name),
+      allCookies: allCookies
+    });
+    
+    console.log('Cookie debug - incoming request:', {
+      hasAdminToken: !!token,
+      tokenValue: token ? `${token.substring(0, 20)}...` : null,
+      allCookieNames: allCookies.map(c => c.name),
+      cookieCount: allCookies.length
+    });
     
     if (!token) {
       logger.warn('No admin token found in cookies');
