@@ -7,9 +7,30 @@ import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
+    logger.info('LINE callback received', { 
+      url: request.url,
+      searchParams: Object.fromEntries(request.nextUrl.searchParams),
+    });
+    
+    // Check required environment variables
+    if (!env.LINE_LOGIN_CHANNEL_ID || !env.LINE_LOGIN_CHANNEL_SECRET || !env.LINE_REDIRECT_URI) {
+      logger.error('Missing LINE environment variables', {
+        hasChannelId: !!env.LINE_LOGIN_CHANNEL_ID,
+        hasChannelSecret: !!env.LINE_LOGIN_CHANNEL_SECRET,
+        hasRedirectUri: !!env.LINE_REDIRECT_URI,
+      });
+      return NextResponse.redirect(new URL('/login?error=configuration_error', env.APP_URL));
+    }
+    
     const searchParams = request.nextUrl.searchParams;
     const code = searchParams.get('code');
     const state = searchParams.get('state');
+    const error = searchParams.get('error');
+    
+    if (error) {
+      logger.warn('LINE callback received error', { error });
+      return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error)}`, env.APP_URL));
+    }
     
     if (!code) {
       logger.warn('LINE callback missing code parameter');
@@ -117,10 +138,21 @@ export async function GET(request: NextRequest) {
     return response;
     
   } catch (error: any) {
-    logger.error('LINE authentication failed', error);
+    logger.error('LINE authentication failed', {
+      error: error.message,
+      stack: error.stack,
+      status: error.response?.status,
+      data: error.response?.data,
+      url: request.url,
+    });
+    
+    const errorMessage = error.response?.data?.error_description || 
+                        error.response?.data?.error || 
+                        error.message || 
+                        'authentication_failed';
     
     return NextResponse.redirect(
-      new URL(`/login?error=${encodeURIComponent(error.message || 'authentication_failed')}`, env.APP_URL)
+      new URL(`/login?error=${encodeURIComponent(errorMessage)}`, env.APP_URL)
     );
   }
 }
