@@ -59,12 +59,41 @@ export default function AdminUsersPage() {
   const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
-    fetchUsers();
-  }, [currentPage, statusFilter, sortBy, sortOrder, searchQuery]);
+    checkAdminAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      fetchUsers();
+    }
+  }, [currentPage, statusFilter, sortBy, sortOrder, searchQuery, loading]);
+
+  const checkAdminAuth = async () => {
+    try {
+      const response = await fetch('/api/admin/check-auth', {
+        credentials: 'include',
+      });
+      
+      if (response.status === 401 || response.status === 403) {
+        router.push('/admin/login');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Auth check failed');
+      }
+      
+      // 認証OK、データ取得開始
+      setLoading(false);
+      
+    } catch (error) {
+      console.error('Admin auth check error:', error);
+      router.push('/admin/login');
+    }
+  };
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
       setError(null);
       
       const params = new URLSearchParams({
@@ -81,7 +110,7 @@ export default function AdminUsersPage() {
       });
       
       if (response.status === 401) {
-        router.push('/login');
+        router.push('/admin/login');
         return;
       }
       
@@ -101,8 +130,6 @@ export default function AdminUsersPage() {
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('ユーザーデータの取得に失敗しました');
-    } finally {
-      setLoading(false);
     }
   };
 

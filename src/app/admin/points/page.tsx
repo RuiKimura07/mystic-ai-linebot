@@ -70,8 +70,38 @@ export default function AdminPointsPage() {
   });
 
   useEffect(() => {
-    fetchUsers();
-  }, [currentPage, statusFilter, sortBy, sortOrder, searchQuery]);
+    checkAdminAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      fetchUsers();
+    }
+  }, [currentPage, statusFilter, sortBy, sortOrder, searchQuery, loading]);
+
+  const checkAdminAuth = async () => {
+    try {
+      const response = await fetch('/api/admin/check-auth', {
+        credentials: 'include',
+      });
+      
+      if (response.status === 401 || response.status === 403) {
+        router.push('/admin/login');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Auth check failed');
+      }
+      
+      // 認証OK、データ取得開始
+      setLoading(false);
+      
+    } catch (error) {
+      console.error('Admin auth check error:', error);
+      router.push('/admin/login');
+    }
+  };
 
   useEffect(() => {
     if (showAllTransactionsModal) {
@@ -81,7 +111,6 @@ export default function AdminPointsPage() {
 
   const fetchUsers = async () => {
     try {
-      setLoading(true);
       setError(null);
       
       const params = new URLSearchParams({
@@ -98,7 +127,7 @@ export default function AdminPointsPage() {
       });
       
       if (response.status === 401) {
-        router.push('/login');
+        router.push('/admin/login');
         return;
       }
       
