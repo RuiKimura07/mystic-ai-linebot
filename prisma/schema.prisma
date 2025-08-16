@@ -36,6 +36,10 @@ model User {
   
   @@index([lineUserId])
   @@index([email])
+  @@index([status])
+  @@index([role])
+  @@index([createdAt])
+  @@index([lastLoginAt])
 }
 
 model Transaction {
