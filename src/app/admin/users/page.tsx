@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import AdminNav from '@/components/AdminNav';
 
 interface User {
   id: string;
@@ -258,10 +259,12 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8 px-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザー管理</h1>
+    <div className="min-h-screen bg-gray-100">
+      <AdminNav />
+      <div className="py-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white rounded-lg shadow-xl p-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-6">ユーザー管理</h1>
 
           {/* 統計情報 */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -547,9 +550,11 @@ export default function AdminUsersPage() {
                 </button>
               </div>
             </div>
+            </div>
           </div>
+        )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
