@@ -9,7 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
     
+    logger.info('Admin login attempt', { email });
+    
     if (!email || !password) {
+      logger.warn('Admin login with missing credentials', { email, hasPassword: !!password });
       return NextResponse.json(
         { error: 'メールアドレスとパスワードを入力してください' },
         { status: 400 }
@@ -23,6 +26,14 @@ export async function POST(request: NextRequest) {
         role: 'ADMIN',
         status: 'ACTIVE',
       },
+    });
+    
+    logger.info('Admin user lookup result', { 
+      email, 
+      userFound: !!user, 
+      userId: user?.id,
+      hasPasswordHash: !!user?.passwordHash,
+      userRole: user?.role 
     });
     
     if (!user) {
@@ -42,7 +53,10 @@ export async function POST(request: NextRequest) {
     }
     
     // パスワード照合
+    logger.info('Comparing password', { email, userId: user.id });
     const passwordMatch = await bcryptjs.compare(password, user.passwordHash);
+    logger.info('Password comparison result', { email, userId: user.id, passwordMatch });
+    
     if (!passwordMatch) {
       logger.warn('Admin login attempt with wrong password', { email, userId: user.id });
       return NextResponse.json(

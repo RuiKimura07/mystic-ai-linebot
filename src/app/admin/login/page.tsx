@@ -27,11 +27,15 @@ export default function AdminLoginPage() {
 
       const data = await response.json();
 
+      console.log('Login response:', { status: response.status, data });
+
       if (response.ok) {
         // ログイン成功
+        console.log('Login successful, redirecting to /admin/users');
         router.push('/admin/users');
       } else {
-        setError(data.error || 'ログインに失敗しました');
+        console.error('Login failed:', { status: response.status, data });
+        setError(`ログインエラー (${response.status}): ${data.error || 'ログインに失敗しました'}`);
       }
     } catch (error) {
       console.error('Login error:', error);
