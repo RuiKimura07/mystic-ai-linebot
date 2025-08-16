@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import LineContainer from '@/components/LineContainer';
 import LineButton from '@/components/LineButton';
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const [showDeleteMessage, setShowDeleteMessage] = useState(false);
 
@@ -113,5 +113,22 @@ export default function LoginPage() {
         </div>
       </div>
     </LineContainer>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-700">読み込み中...</p>
+          </div>
+        </div>
+      </LineContainer>
+    }>
+      <LoginContent />
+    </Suspense>
   );
 }
