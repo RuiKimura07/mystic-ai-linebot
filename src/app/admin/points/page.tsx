@@ -688,11 +688,9 @@ export default function AdminPointsPage() {
                 </table>
               )}
             </div>
-            </div>
           </div>
-        )}
         </div>
-      </div>
+      )}
     </div>
   );
 }
