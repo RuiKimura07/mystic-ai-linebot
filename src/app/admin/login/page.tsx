@@ -31,8 +31,12 @@ export default function AdminLoginPage() {
 
       if (response.ok) {
         // ログイン成功
-        console.log('Login successful, redirecting to /admin/users');
-        router.push('/admin/users');
+        console.log('Login successful, waiting before redirect to ensure cookie is set');
+        // クッキーが確実に設定されるまで少し待機
+        setTimeout(() => {
+          console.log('Redirecting to /admin/users');
+          router.push('/admin/users');
+        }, 500);
       } else {
         console.error('Login failed:', { status: response.status, data });
         setError(`ログインエラー (${response.status}): ${data.error || 'ログインに失敗しました'}`);

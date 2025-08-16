@@ -7,15 +7,31 @@ export async function GET(request: NextRequest) {
   try {
     const token = request.cookies.get('admin-token')?.value;
     
+    logger.info('Admin auth check', { hasToken: !!token });
+    
     if (!token) {
+      logger.warn('No admin token found in cookies');
       return NextResponse.json({ error: 'No admin token' }, { status: 401 });
     }
     
     // Verify JWT token
     const decoded = jwt.verify(token, env.JWT_SECRET) as any;
     
+    logger.info('Admin token decoded', { 
+      userId: decoded.userId, 
+      role: decoded.role, 
+      type: decoded.type,
+      email: decoded.email 
+    });
+    
     // Check if user is admin
     if (decoded.role !== 'ADMIN' || decoded.type !== 'admin') {
+      logger.warn('Token validation failed', { 
+        role: decoded.role, 
+        type: decoded.type,
+        isAdminRole: decoded.role === 'ADMIN',
+        isAdminType: decoded.type === 'admin'
+      });
       return NextResponse.json({ error: 'Not an admin user' }, { status: 403 });
     }
     
