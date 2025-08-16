@@ -33,12 +33,6 @@ export const env = {
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'admin123',
   SESSION_SECRET: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'session-secret-key-change-in-production',
   
-  // Redis設定（オプション）
-  REDIS_HOST: process.env.REDIS_HOST,
-  REDIS_PORT: process.env.REDIS_PORT,
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD,
-  REDIS_DB: process.env.REDIS_DB,
-  
 } as const;
 
 // 必須環境変数のチェック

@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 // 最適化されたユーザー取得クエリ
 export async function getUserWithBalance(userId: string) {
@@ -227,15 +227,8 @@ export async function getPaginatedUsers(
   };
 }
 
-// コネクションプール最適化設定
-export const optimizedPrisma = new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL,
-    },
-  },
-});
+// 基本設定（必要に応じて追加のPrismaインスタンス）
+// 現在はメインのprismaインスタンスを使用
 
 // クリーンアップ用
 export async function cleanupExpiredSessions() {
