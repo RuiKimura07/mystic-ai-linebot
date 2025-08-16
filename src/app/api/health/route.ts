@@ -9,7 +9,6 @@ export async function GET() {
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',
       environment: env.NODE_ENV,
-      demoMode: env.DEMO_MODE,
       services: {
         app: 'operational',
         database: {
@@ -18,15 +17,15 @@ export async function GET() {
         },
         lineLogin: {
           configured: !!(env.LINE_LOGIN_CHANNEL_SECRET && env.LINE_LOGIN_CHANNEL_ID),
-          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
+          status: 'operational'
         },
         lineMessaging: {
           configured: !!(env.LINE_MESSAGING_CHANNEL_ACCESS_TOKEN && env.LINE_MESSAGING_CHANNEL_SECRET),
-          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
+          status: 'operational'
         },
         stripe: {
           configured: !!(env.STRIPE_SECRET_KEY && env.STRIPE_PUBLISHABLE_KEY),
-          status: env.DEMO_MODE ? 'demo_mode' : 'operational'
+          status: 'operational'
         },
         jwt: {
           configured: !!env.JWT_SECRET,

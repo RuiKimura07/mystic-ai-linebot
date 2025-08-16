@@ -9,14 +9,9 @@ export default function LoginPage() {
     const channelId = process.env.NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID || process.env.NEXT_PUBLIC_LINE_CHANNEL_ID;
     const redirectUri = process.env.NEXT_PUBLIC_LINE_REDIRECT_URI;
     
-    // デバッグログ
-    console.log('Channel ID:', channelId ? 'Set' : 'Not set');
-    console.log('Redirect URI:', redirectUri ? 'Set' : 'Not set');
-    
     if (!channelId || !redirectUri) {
-      console.warn('LINE環境変数が設定されていません - デモモードで実行');
-      alert('LINE環境変数が設定されていません。render.comで環境変数を確認してください。');
-      handleDemoLogin();
+      console.error('LINE環境変数が設定されていません');
+      alert('システムエラーが発生しました。管理者にお問い合わせください。');
       return;
     }
     
@@ -27,25 +22,7 @@ export default function LoginPage() {
     
     const lineAuthUrl = `https://access.line.me/oauth2/v2.1/authorize?response_type=code&client_id=${channelId}&redirect_uri=${encodeURIComponent(redirectUri!)}&state=${state}&scope=profile%20openid`;
     
-    console.log('Generated LINE Auth URL:', lineAuthUrl);
-    console.log('State saved:', state);
-    
     window.location.href = lineAuthUrl;
-  };
-
-  const handleDemoLogin = () => {
-    // デモモード：モックユーザーでログイン
-    const mockUser = {
-      id: 'demo-user-001',
-      name: '山田太郎',
-      email: 'demo@example.com',
-      pictureUrl: '',
-      role: 'user' as const,
-      balance: 1200,
-    };
-    
-    localStorage.setItem('demo-auth', JSON.stringify(mockUser));
-    window.location.href = '/dashboard';
   };
 
   return (
@@ -105,15 +82,6 @@ export default function LoginPage() {
           <p className="text-xs text-gray-700 text-center px-4 leading-relaxed">
             ログインすることで利用規約とプライバシーポリシーに同意したものとみなします
           </p>
-
-          {/* デモモード表示 */}
-          {!process.env.NEXT_PUBLIC_LINE_CHANNEL_ID && (
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-xs text-yellow-700 text-center">
-                デモモード：LINEログインボタンをクリックするとデモユーザーでログインします
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </LineContainer>

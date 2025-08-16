@@ -15,6 +15,13 @@ interface PricePlan {
   bonus?: string;
 }
 
+interface User {
+  id: string;
+  displayName: string;
+  balance: number;
+  email?: string;
+}
+
 const pricePlans: PricePlan[] = [
   { id: 'plan_500', points: 500, price: 500 },
   { id: 'plan_1000', points: 1000, price: 980 },
@@ -27,51 +34,53 @@ export default function PointsPurchasePage() {
   const router = useRouter();
   const [selectedPlan, setSelectedPlan] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentBalance, setCurrentBalance] = useState(1200);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // LocalStorageからユーザー残高を取得
-    const storedAuth = localStorage.getItem('demo-auth');
-    if (storedAuth) {
-      const user = JSON.parse(storedAuth);
-      setCurrentBalance(user.balance || 1200);
-    }
+    fetchUserData();
   }, []);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/user');
+      
+      if (response.status === 401) {
+        router.push('/login');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      
+      const data = await response.json();
+      setUser(data.user);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError('ユーザー情報の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePurchase = async () => {
     if (!selectedPlan) {
-      alert('プランを選択してください');
+      setError('プランを選択してください');
+      return;
+    }
+
+    if (!user) {
+      setError('ユーザー情報が取得できていません');
       return;
     }
 
     setIsLoading(true);
-    
-    // デモモード：Stripe設定がない場合のモック処理
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      const plan = pricePlans.find(p => p.id === selectedPlan);
-      if (plan) {
-        // モック決済処理
-        setTimeout(() => {
-          const newBalance = currentBalance + plan.points;
-          // LocalStorageのユーザー情報を更新
-          const storedAuth = localStorage.getItem('demo-auth');
-          if (storedAuth) {
-            const user = JSON.parse(storedAuth);
-            user.balance = newBalance;
-            localStorage.setItem('demo-auth', JSON.stringify(user));
-          }
-          
-          setCurrentBalance(newBalance);
-          setIsLoading(false);
-          alert(`購入完了！\n${plan.points}ポイントを追加しました\n新しい残高：${newBalance}ポイント`);
-          router.push('/dashboard');
-        }, 1500);
-      }
-      return;
-    }
+    setError(null);
     
     try {
-      // 本番モード：Stripe決済
       const response = await fetch('/api/stripe/create-checkout-session', {
         method: 'POST',
         headers: {
@@ -82,31 +91,91 @@ export default function PointsPurchasePage() {
         }),
       });
 
+      if (response.status === 401) {
+        router.push('/login');
+        return;
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Stripe API error:', errorData);
         throw new Error(errorData.error || 'Failed to create checkout session');
       }
 
-
       const { sessionId } = await response.json();
       
-      // Redirect to Stripe Checkout
+      // Stripe Checkoutにリダイレクト
       const stripe = await stripePromise;
       if (stripe) {
         const { error } = await stripe.redirectToCheckout({ sessionId });
         if (error) {
           console.error('Stripe redirect error:', error);
-          alert('決済処理中にエラーが発生しました');
+          setError('決済処理中にエラーが発生しました');
         }
+      } else {
+        throw new Error('Stripe could not be loaded');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Purchase error:', error);
-      alert('購入処理中にエラーが発生しました');
+      setError(error.message || '購入処理中にエラーが発生しました');
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-700">読み込み中...</p>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
+
+  if (error && !user) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="text-red-600 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <p className="text-gray-700 mb-4">{error}</p>
+            <button
+              onClick={() => fetchUserData()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              再試行
+            </button>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <p className="text-gray-700">ユーザー情報が見つかりません</p>
+            <button
+              onClick={() => router.push('/login')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              ログインページへ
+            </button>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
 
   return (
     <LineContainer>
@@ -124,10 +193,22 @@ export default function PointsPurchasePage() {
           <h1 className="text-lg font-bold text-gray-900">ポイント購入</h1>
         </div>
 
+        {/* エラー表示 */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 mx-4 mt-4 rounded-lg">
+            <div className="flex">
+              <svg className="w-5 h-5 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm">{error}</span>
+            </div>
+          </div>
+        )}
+
         {/* 残高表示 */}
         <div className="bg-blue-500 text-white p-4 mx-4 mt-4 rounded-lg">
           <div className="text-sm opacity-90 mb-1">残高</div>
-          <div className="text-2xl font-bold">{currentBalance.toLocaleString()} pt</div>
+          <div className="text-2xl font-bold">{user.balance.toLocaleString()} pt</div>
         </div>
 
         {/* プラン選択 */}

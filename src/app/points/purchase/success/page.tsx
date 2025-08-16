@@ -10,6 +10,7 @@ function PurchaseSuccessContent() {
   const searchParams = useSearchParams();
   const [isVerifying, setIsVerifying] = useState(true);
   const [purchaseDetails, setPurchaseDetails] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const verifyPurchase = async () => {
@@ -21,27 +22,24 @@ function PurchaseSuccessContent() {
       }
 
       try {
-        // 購入確認API呼び出し（実装要）
-        // const response = await fetch(`/api/stripe/verify-purchase?session_id=${sessionId}`);
-        // const data = await response.json();
+        const response = await fetch(`/api/stripe/verify-purchase?session_id=${sessionId}`);
         
-        // デモ用データ
-        setPurchaseDetails({
-          points: 3000,
-          amount: 2850,
-          date: new Date().toLocaleString('ja-JP'),
-        });
-
-        // LocalStorageの残高を更新（デモ用）
-        const storedAuth = localStorage.getItem('demo-auth');
-        if (storedAuth) {
-          const userData = JSON.parse(storedAuth);
-          userData.balance = (userData.balance || 0) + 3000;
-          localStorage.setItem('demo-auth', JSON.stringify(userData));
+        if (response.status === 401) {
+          router.push('/login');
+          return;
         }
 
-      } catch (error) {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Purchase verification failed');
+        }
+
+        const data = await response.json();
+        setPurchaseDetails(data);
+
+      } catch (error: any) {
         console.error('Purchase verification error:', error);
+        setError(error.message || '購入確認に失敗しました');
       } finally {
         setIsVerifying(false);
       }
@@ -57,6 +55,38 @@ function PurchaseSuccessContent() {
           <div className="text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-green-600 mb-4 mx-auto"></div>
             <p className="text-gray-700">購入を確認中...</p>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center max-w-sm">
+            <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg className="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 mb-4">確認エラー</h1>
+            <p className="text-gray-700 mb-6">{error}</p>
+            <div className="space-y-3">
+              <LineButton
+                variant="primary"
+                onClick={() => router.push('/dashboard')}
+              >
+                マイページへ戻る
+              </LineButton>
+              <LineButton
+                variant="secondary"
+                onClick={() => router.push('/points/purchase')}
+              >
+                ポイント購入ページへ
+              </LineButton>
+            </div>
           </div>
         </div>
       </LineContainer>

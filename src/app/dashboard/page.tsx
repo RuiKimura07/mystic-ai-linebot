@@ -8,24 +8,29 @@ import LineButton from '@/components/LineButton';
 
 interface Transaction {
   id: string;
-  type: 'purchase' | 'usage' | 'bonus';
+  type: 'PURCHASE' | 'USAGE' | 'BONUS' | 'ADJUSTMENT';
   amount: number;
   description: string;
-  date: string;
-  paymentMethod?: string;
-  chatType?: string;
-  fortuneTellerName?: string;
+  createdAt: string;
+  balanceBefore: number;
+  balanceAfter: number;
+  stripePaymentId?: string;
 }
 
 interface User {
   id: string;
-  name: string;
-  email: string;
+  lineUserId: string;
+  displayName: string;
+  pictureUrl?: string;
+  email?: string;
   balance: number;
   totalPurchased: number;
   totalUsed: number;
-  membershipLevel: 'bronze' | 'silver' | 'gold' | 'platinum';
-  registeredAt: string;
+  status: 'ACTIVE' | 'SUSPENDED' | 'DELETED';
+  role: 'USER' | 'ADMIN';
+  createdAt: string;
+  lastLoginAt?: string;
+  transactions: Transaction[];
 }
 
 interface ChatHistory {
@@ -45,59 +50,8 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'profile'>('overview');
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
-  
-  const [transactions] = useState<Transaction[]>([
-    {
-      id: '1',
-      type: 'purchase',
-      amount: 3000,
-      description: 'ポイント購入',
-      date: '2025/08/10 15:30',
-      paymentMethod: 'Visa ****1234'
-    },
-    {
-      id: '2',
-      type: 'usage',
-      amount: -500,
-      description: '恋愛相談チャット',
-      date: '2025/08/10 14:15',
-      chatType: '恋愛相談',
-      fortuneTellerName: '桜井先生'
-    },
-    {
-      id: '3',
-      type: 'usage',
-      amount: -300,
-      description: '仕事運チャット',
-      date: '2025/08/09 20:30',
-      chatType: '仕事運',
-      fortuneTellerName: '田中先生'
-    },
-    {
-      id: '4',
-      type: 'purchase',
-      amount: 1000,
-      description: 'ポイント購入',
-      date: '2025/08/08 12:45',
-      paymentMethod: 'JCB ****5678'
-    },
-    {
-      id: '5',
-      type: 'bonus',
-      amount: 100,
-      description: '新規登録ボーナス',
-      date: '2025/08/01 10:00'
-    },
-    {
-      id: '6',
-      type: 'usage',
-      amount: -200,
-      description: '健康運チャット',
-      date: '2025/08/07 16:20',
-      chatType: '健康運',
-      fortuneTellerName: '山田先生'
-    }
-  ]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [chatHistory] = useState<ChatHistory[]>([
     {
@@ -133,78 +87,136 @@ export default function DashboardPage() {
   ]);
 
   useEffect(() => {
-    // LocalStorageからユーザー情報を取得、なければデモデータを使用
-    const storedAuth = localStorage.getItem('demo-auth');
-    let userData: any = {};
-    
-    if (storedAuth) {
-      try {
-        userData = JSON.parse(storedAuth);
-      } catch (e) {
-        console.error('Failed to parse stored auth data:', e);
-        userData = {};
-      }
-    }
-
-    // デフォルトのデモユーザーデータを設定
-    const defaultUser = {
-      id: 'demo-user-001',
-      name: '山田太郎',
-      email: 'demo@example.com',
-      balance: 1200,
-      totalPurchased: 5000,
-      totalUsed: 1000,
-      membershipLevel: 'silver' as const,
-      registeredAt: '2025/08/01'
-    };
-
-    const userBalance = userData.balance || defaultUser.balance;
-    const finalUser = {
-      ...defaultUser,
-      ...userData,
-      membershipLevel: userBalance > 5000 ? 'gold' as const : 
-                       userBalance > 2000 ? 'silver' as const : 'bronze' as const
-    };
-
-    // デモ用認証情報がない場合は保存
-    if (!storedAuth) {
-      localStorage.setItem('demo-auth', JSON.stringify(finalUser));
-    }
-
-    setUser(finalUser);
+    fetchUserData();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('demo-auth');
-    router.push('/login');
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/user');
+      
+      if (response.status === 401) {
+        router.push('/login');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      
+      const data = await response.json();
+      setUser(data.user);
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      setError('ユーザー情報の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const getMembershipBadge = (level: string) => {
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      router.push('/login');
+    }
+  };
+
+  const getMembershipBadge = (balance: number) => {
     const badges = {
       bronze: { color: 'bg-amber-100 text-amber-800', label: 'ブロンズ' },
       silver: { color: 'bg-gray-100 text-gray-800', label: 'シルバー' },
       gold: { color: 'bg-yellow-100 text-yellow-800', label: 'ゴールド' },
       platinum: { color: 'bg-purple-100 text-purple-800', label: 'プラチナ' }
     };
-    return badges[level as keyof typeof badges] || badges.bronze;
+    
+    if (balance >= 10000) return badges.platinum;
+    if (balance >= 5000) return badges.gold;
+    if (balance >= 2000) return badges.silver;
+    return badges.bronze;
   };
 
   const getThisMonthStats = () => {
-    const thisMonth = transactions.filter(t => t.date.includes('2025/08'));
-    const totalUsed = thisMonth.filter(t => t.type === 'usage').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-    const chatCount = thisMonth.filter(t => t.type === 'usage').length;
+    if (!user?.transactions) return { totalUsed: 0, chatCount: 0 };
+    
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    const thisMonth = user.transactions.filter(t => {
+      const transactionDate = new Date(t.createdAt);
+      return transactionDate.getMonth() === currentMonth && 
+             transactionDate.getFullYear() === currentYear;
+    });
+    
+    const totalUsed = thisMonth.filter(t => t.type === 'USAGE').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const chatCount = thisMonth.filter(t => t.type === 'USAGE').length;
     return { totalUsed, chatCount };
   };
 
   const thisMonthStats = getThisMonthStats();
 
-  if (!user) {
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
     return (
       <LineContainer>
         <div className="flex items-center justify-center h-screen">
           <div className="text-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
             <p className="mt-4 text-gray-700">読み込み中...</p>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="text-red-600 mb-4">
+              <svg className="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+            </div>
+            <p className="text-gray-700 mb-4">{error}</p>
+            <button
+              onClick={() => fetchUserData()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              再試行
+            </button>
+          </div>
+        </div>
+      </LineContainer>
+    );
+  }
+
+  if (!user) {
+    return (
+      <LineContainer>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <p className="text-gray-700">ユーザー情報が見つかりません</p>
+            <button
+              onClick={() => router.push('/login')}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              ログインページへ
+            </button>
           </div>
         </div>
       </LineContainer>
@@ -219,8 +231,8 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-3">
               <h1 className="text-lg font-bold text-gray-900">マイページ</h1>
-              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getMembershipBadge(user.membershipLevel).color}`}>
-                {getMembershipBadge(user.membershipLevel).label}
+              <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getMembershipBadge(user.balance).color}`}>
+                {getMembershipBadge(user.balance).label}
               </span>
             </div>
             <button
@@ -230,7 +242,7 @@ export default function DashboardPage() {
               ログアウト
             </button>
           </div>
-          <p className="text-sm text-gray-700 mt-1">ようこそ、{user.name}さん</p>
+          <p className="text-sm text-gray-700 mt-1">ようこそ、{user.displayName}さん</p>
         </div>
 
         {/* タブナビゲーション */}
@@ -356,18 +368,18 @@ export default function DashboardPage() {
                   </button>
                 </div>
                 <div className="space-y-2">
-                  {transactions.slice(0, 5).map((transaction) => (
+                  {user.transactions.slice(0, 5).map((transaction) => (
                     <div key={transaction.id} className="flex justify-between items-center py-2">
                       <div className="flex items-center space-x-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                          transaction.type === 'purchase' ? 'bg-green-100' :
-                          transaction.type === 'bonus' ? 'bg-blue-100' : 'bg-red-100'
+                          transaction.type === 'PURCHASE' ? 'bg-green-100' :
+                          transaction.type === 'BONUS' ? 'bg-blue-100' : 'bg-red-100'
                         }`}>
-                          {transaction.type === 'purchase' ? (
+                          {transaction.type === 'PURCHASE' ? (
                             <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                             </svg>
-                          ) : transaction.type === 'bonus' ? (
+                          ) : transaction.type === 'BONUS' ? (
                             <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                             </svg>
@@ -382,14 +394,13 @@ export default function DashboardPage() {
                             {transaction.description}
                           </div>
                           <div className="text-xs text-gray-700">
-                            {transaction.date.split(' ')[0]}
-                            {transaction.paymentMethod && ` • ${transaction.paymentMethod}`}
-                            {transaction.fortuneTellerName && ` • ${transaction.fortuneTellerName}`}
+                            {formatDate(transaction.createdAt)}
+                            {transaction.stripePaymentId && ' • Stripe決済'}
                           </div>
                         </div>
                       </div>
                       <div className={`font-bold text-sm ${
-                        transaction.type === 'purchase' || transaction.type === 'bonus'
+                        transaction.type === 'PURCHASE' || transaction.type === 'BONUS'
                           ? 'text-green-600'
                           : 'text-red-600'
                       }`}>
@@ -441,21 +452,34 @@ export default function DashboardPage() {
                 <div className="space-y-4">
                   <div>
                     <label className="text-sm text-gray-700">名前</label>
-                    <p className="font-medium text-gray-900">{user.name}</p>
+                    <p className="font-medium text-gray-900">{user.displayName}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-700">メールアドレス</label>
-                    <p className="font-medium text-gray-900">{user.email}</p>
+                    <p className="font-medium text-gray-900">{user.email || '未設定'}</p>
                   </div>
                   <div>
                     <label className="text-sm text-gray-700">会員レベル</label>
-                    <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${getMembershipBadge(user.membershipLevel).color}`}>
-                      {getMembershipBadge(user.membershipLevel).label}
+                    <span className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${getMembershipBadge(user.balance).color}`}>
+                      {getMembershipBadge(user.balance).label}
                     </span>
                   </div>
                   <div>
+                    <label className="text-sm text-gray-700">アカウント状態</label>
+                    <p className="font-medium text-gray-900">
+                      {user.status === 'ACTIVE' ? 'アクティブ' : 
+                       user.status === 'SUSPENDED' ? '停止中' : '削除済み'}
+                    </p>
+                  </div>
+                  <div>
                     <label className="text-sm text-gray-700">登録日</label>
-                    <p className="font-medium text-gray-900">{user.registeredAt}</p>
+                    <p className="font-medium text-gray-900">{formatDate(user.createdAt).split(' ')[0]}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm text-gray-700">最終ログイン</label>
+                    <p className="font-medium text-gray-900">
+                      {user.lastLoginAt ? formatDate(user.lastLoginAt) : '記録なし'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -512,20 +536,19 @@ export default function DashboardPage() {
             </div>
             <div className="overflow-y-auto max-h-[60vh] p-4">
               <div className="space-y-3">
-                {transactions.map((transaction) => (
+                {user.transactions.map((transaction) => (
                   <div key={transaction.id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
                     <div>
                       <div className="font-medium text-gray-900 text-sm">
                         {transaction.description}
                       </div>
                       <div className="text-xs text-gray-700">
-                        {transaction.date}
-                        {transaction.paymentMethod && ` • ${transaction.paymentMethod}`}
-                        {transaction.fortuneTellerName && ` • ${transaction.fortuneTellerName}`}
+                        {formatDate(transaction.createdAt)}
+                        {transaction.stripePaymentId && ' • Stripe決済'}
                       </div>
                     </div>
                     <div className={`font-bold text-sm ${
-                      transaction.type === 'purchase' || transaction.type === 'bonus'
+                      transaction.type === 'PURCHASE' || transaction.type === 'BONUS'
                         ? 'text-green-600'
                         : 'text-red-600'
                     }`}>

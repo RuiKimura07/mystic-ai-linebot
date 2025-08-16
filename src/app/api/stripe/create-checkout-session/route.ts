@@ -1,17 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
+import jwt from 'jsonwebtoken';
+import { prisma } from '@/lib/prisma';
+import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-07-30.basil',
+const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
 });
 
 // 料金プランの定義
 const pricePlans = {
-  'plan-500': { points: 500, price: 500, bonus: null },
-  'plan-1000': { points: 1000, price: 980, bonus: '2%お得' },
-  'plan-3000': { points: 3000, price: 2850, bonus: '5%お得' },
-  'plan-5000': { points: 5000, price: 4500, bonus: '10%お得' },
-  'plan-10000': { points: 10000, price: 8500, bonus: '15%お得' },
+  'plan_500': { points: 500, price: 500, bonus: null },
+  'plan_1000': { points: 1000, price: 980, bonus: '2%お得' },
+  'plan_3000': { points: 3000, price: 2850, bonus: '5%お得' },
+  'plan_5000': { points: 5000, price: 4500, bonus: '10%お得' },
+  'plan_10000': { points: 10000, price: 8500, bonus: '15%お得' },
 };
 
 export async function POST(request: NextRequest) {
@@ -27,11 +31,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ユーザー情報を取得（本来はセッションから取得）
-    // デモ用に固定値を使用
-    const userId = 'demo-user-001';
-    const userEmail = 'demo@example.com';
-    const lineUserId = 'demo-line-user';
+    // ユーザー認証
+    const token = request.cookies.get('auth-token')?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+    
+    // ユーザー情報を取得
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     // Stripe Checkout Session作成
     const session = await stripe.checkout.sessions.create({
@@ -50,20 +65,33 @@ export async function POST(request: NextRequest) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/points/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/points/purchase`,
+      success_url: `${env.APP_URL}/points/purchase/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${env.APP_URL}/points/purchase`,
       metadata: {
-        userId: userId,
+        userId: user.id,
         points: plan.points.toString(),
-        lineUserId: lineUserId,
+        lineUserId: user.lineUserId,
         planId: planId,
       },
-      customer_email: userEmail,
+      customer_email: user.email || undefined,
+    });
+
+    logger.info('Stripe checkout session created', {
+      userId: user.id,
+      sessionId: session.id,
+      planId,
+      points: plan.points,
+      price: plan.price
     });
 
     return NextResponse.json({ sessionId: session.id });
-  } catch (error) {
-    console.error('Stripe session creation error:', error);
+  } catch (error: any) {
+    logger.error('Stripe session creation error', error);
+    
+    if (error.name === 'JsonWebTokenError') {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+    
     return NextResponse.json(
       { error: 'Failed to create checkout session' },
       { status: 500 }

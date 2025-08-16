@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  lineUserId        String   @unique
+  displayName       String
+  pictureUrl        String?
+  email             String?
+  statusMessage     String?
+  
+  // ポイント管理
+  balance           Int      @default(0)
+  totalPurchased    Int      @default(0)
+  totalUsed         Int      @default(0)
+  
+  // アカウント状態
+  status            UserStatus @default(ACTIVE)
+  role              UserRole   @default(USER)
+  
+  // タイムスタンプ
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  lastLoginAt       DateTime?
+  
+  // リレーション
+  transactions      Transaction[]
+  chatSessions      ChatSession[]
+  
+  @@index([lineUserId])
+  @@index([email])
+}
+
+model Transaction {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  type              TransactionType
+  amount            Int
+  description       String
+  
+  // Stripe関連
+  stripePaymentId   String?
+  stripeSessionId   String?
+  
+  // 残高スナップショット
+  balanceBefore     Int
+  balanceAfter      Int
+  
+  createdAt         DateTime @default(now())
+  
+  @@index([userId])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model ChatSession {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  fortuneTellerName String?
+  chatType          String?
+  
+  messages          Json     // メッセージ履歴をJSON形式で保存
+  
+  pointsUsed        Int      @default(0)
+  duration          Int?     // 秒単位
+  
+  status            ChatStatus @default(ACTIVE)
+  
+  startedAt         DateTime @default(now())
+  endedAt           DateTime?
+  
+  @@index([userId])
+  @@index([status])
+}
+
+// Enum定義
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  FORTUNE_TELLER
+}
+
+enum TransactionType {
+  PURCHASE     // ポイント購入
+  USAGE        // ポイント使用
+  ADJUSTMENT   // 管理者による調整
+  REFUND       // 返金
+}
+
+enum ChatStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}

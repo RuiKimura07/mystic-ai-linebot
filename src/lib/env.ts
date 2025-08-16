@@ -33,8 +33,6 @@ export const env = {
   ADMIN_PASSWORD: process.env.ADMIN_PASSWORD || 'admin123',
   SESSION_SECRET: process.env.SESSION_SECRET || process.env.JWT_SECRET || 'session-secret-key-change-in-production',
   
-  // デモモード
-  DEMO_MODE: process.env.DEMO_MODE === 'true' || false,
 } as const;
 
 // 必須環境変数のチェック
@@ -46,16 +44,15 @@ export function validateEnv() {
   
   const missing: string[] = [];
   
-  // デモモードでない場合は追加の環境変数が必要
-  if (!env.DEMO_MODE) {
-    required.push(
-      'NEXT_PUBLIC_LINE_CHANNEL_ID',
-      'LINE_CHANNEL_SECRET',
-      'NEXT_PUBLIC_LINE_REDIRECT_URI',
-      'STRIPE_SECRET_KEY',
-      'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'
-    );
-  }
+  // 必須の環境変数を追加
+  required.push(
+    'DATABASE_URL',
+    'NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID',
+    'LINE_LOGIN_CHANNEL_SECRET',
+    'NEXT_PUBLIC_LINE_REDIRECT_URI',
+    'STRIPE_SECRET_KEY',
+    'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY'
+  );
   
   for (const key of required) {
     if (!process.env[key]) {
@@ -65,7 +62,7 @@ export function validateEnv() {
   
   if (missing.length > 0) {
     console.warn(`⚠️ Missing required environment variables: ${missing.join(', ')}`);
-    if (env.NODE_ENV === 'production' && !env.DEMO_MODE) {
+    if (env.NODE_ENV === 'production') {
       throw new Error(`Missing required environment variables: ${missing.join(', ')}`);
     }
   }

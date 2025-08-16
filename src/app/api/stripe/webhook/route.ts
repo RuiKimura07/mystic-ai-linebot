@@ -1,5 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPushMessage } from '@/lib/line';
+import { prisma } from '@/lib/prisma';
+import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
+import Stripe from 'stripe';
+
+const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2024-06-20',
+});
 
 // Stripe Webhook処理
 export async function POST(request: NextRequest) {
@@ -7,11 +15,20 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('stripe-signature');
     const body = await request.text();
 
-    // Stripe署名検証（要実装）
-    // const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET);
+    let event;
 
-    // デモ用の簡易処理
-    const event = JSON.parse(body);
+    // Stripe署名検証
+    if (env.STRIPE_WEBHOOK_SECRET && signature) {
+      try {
+        event = stripe.webhooks.constructEvent(body, signature, env.STRIPE_WEBHOOK_SECRET);
+      } catch (err: any) {
+        logger.error('Webhook signature verification failed', err);
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+      }
+    } else {
+      // 開発環境では署名検証をスキップ
+      event = JSON.parse(body);
+    }
 
     switch (event.type) {
       case 'checkout.session.completed':
@@ -27,8 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ received: true });
-  } catch (error) {
-    console.error('Stripe webhook error:', error);
+  } catch (error: any) {
+    logger.error('Stripe webhook error', error);
     return NextResponse.json(
       { error: 'Webhook handler failed' },
       { status: 400 }
@@ -43,28 +60,74 @@ async function handlePaymentSuccess(session: any) {
     const userId = session.metadata?.userId;
     const points = parseInt(session.metadata?.points || '0');
     const lineUserId = session.metadata?.lineUserId;
+    const planId = session.metadata?.planId;
 
     if (!userId || !points) {
-      console.error('Missing user or points data in webhook');
+      logger.error('Missing user or points data in webhook', { session });
       return;
     }
 
-    // データベースのポイント残高を更新（要実装）
-    // await updateUserBalance(userId, points);
+    // ユーザーを取得
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      logger.error('User not found for payment', { userId });
+      return;
+    }
+
+    // データベースのポイント残高を更新
+    const newBalance = user.balance + points;
+    const newTotalPurchased = user.totalPurchased + points;
+
+    // トランザクションで更新
+    const [transaction, updatedUser] = await prisma.$transaction([
+      prisma.transaction.create({
+        data: {
+          userId: userId,
+          type: 'PURCHASE',
+          amount: points,
+          description: `Stripeポイント購入 - ${planId}`,
+          balanceBefore: user.balance,
+          balanceAfter: newBalance,
+          stripePaymentId: session.payment_intent,
+          stripeSessionId: session.id,
+        },
+      }),
+      prisma.user.update({
+        where: { id: userId },
+        data: {
+          balance: newBalance,
+          totalPurchased: newTotalPurchased,
+        },
+      }),
+    ]);
+
+    logger.info('Payment success: Points added to user', {
+      userId,
+      points,
+      newBalance,
+      transactionId: transaction.id,
+      stripeSessionId: session.id
+    });
 
     // LINE通知送信
     if (lineUserId) {
       const message = {
         type: 'text',
-        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${(session.amount_total / 100).toLocaleString()}\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${process.env.NEXT_PUBLIC_APP_URL}/chat`
+        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${(session.amount_total / 100).toLocaleString()}\n💎 現在の残高: ${newBalance.toLocaleString()}pt\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${env.APP_URL}/chat`
       };
 
-      await sendPushMessage(lineUserId, [message]);
+      try {
+        await sendPushMessage(lineUserId, [message]);
+      } catch (lineError) {
+        logger.error('Failed to send LINE notification', { lineError, userId });
+      }
     }
 
-    console.log(`Payment success: User ${userId} purchased ${points} points`);
   } catch (error) {
-    console.error('Payment success handler error:', error);
+    logger.error('Payment success handler error', error);
   }
 }
 
@@ -74,17 +137,22 @@ async function handlePaymentFailed(paymentIntent: any) {
     const userId = paymentIntent.metadata?.userId;
     const lineUserId = paymentIntent.metadata?.lineUserId;
 
+    logger.warn('Payment failed', { userId, paymentIntentId: paymentIntent.id });
+
     if (lineUserId) {
       const message = {
         type: 'text',
-        text: `❌ ポイント購入に失敗しました\n\n決済処理中にエラーが発生いたしました。\nお手数ですが、再度お試しいただくか\nサポートまでお問い合わせください。\n\n👉 再購入: ${process.env.NEXT_PUBLIC_APP_URL}/points/purchase`
+        text: `❌ ポイント購入に失敗しました\n\n決済処理中にエラーが発生いたしました。\nお手数ですが、再度お試しいただくか\nサポートまでお問い合わせください。\n\n👉 再購入: ${env.APP_URL}/points/purchase`
       };
 
-      await sendPushMessage(lineUserId, [message]);
+      try {
+        await sendPushMessage(lineUserId, [message]);
+      } catch (lineError) {
+        logger.error('Failed to send LINE notification for payment failure', { lineError, userId });
+      }
     }
 
-    console.log(`Payment failed for user: ${userId}`);
   } catch (error) {
-    console.error('Payment failed handler error:', error);
+    logger.error('Payment failed handler error', error);
   }
 }
