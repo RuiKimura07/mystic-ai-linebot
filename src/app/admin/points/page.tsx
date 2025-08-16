@@ -93,7 +93,9 @@ export default function AdminPointsPage() {
         search: searchQuery,
       });
       
-      const response = await fetch(`/api/admin/points?${params}`);
+      const response = await fetch(`/api/admin/points?${params}`, {
+        credentials: 'include',
+      });
       
       if (response.status === 401) {
         router.push('/login');
@@ -169,6 +171,7 @@ export default function AdminPointsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(adjustmentData),
       });
       

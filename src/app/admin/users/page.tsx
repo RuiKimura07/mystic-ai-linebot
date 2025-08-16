@@ -76,7 +76,9 @@ export default function AdminUsersPage() {
         search: searchQuery,
       });
       
-      const response = await fetch(`/api/admin/users?${params}`);
+      const response = await fetch(`/api/admin/users?${params}`, {
+        credentials: 'include',
+      });
       
       if (response.status === 401) {
         router.push('/login');
@@ -111,6 +113,7 @@ export default function AdminUsersPage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
           userId,
           updates,
