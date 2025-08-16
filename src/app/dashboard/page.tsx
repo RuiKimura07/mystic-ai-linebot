@@ -53,38 +53,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [chatHistory] = useState<ChatHistory[]>([
-    {
-      id: '1',
-      fortuneTellerName: '桜井先生',
-      chatType: '恋愛相談',
-      duration: 25,
-      pointsUsed: 500,
-      date: '2025/08/10 14:15',
-      rating: 5,
-      satisfaction: 'excellent'
-    },
-    {
-      id: '2',
-      fortuneTellerName: '田中先生',
-      chatType: '仕事運',
-      duration: 18,
-      pointsUsed: 300,
-      date: '2025/08/09 20:30',
-      rating: 4,
-      satisfaction: 'good'
-    },
-    {
-      id: '3',
-      fortuneTellerName: '山田先生',
-      chatType: '健康運',
-      duration: 12,
-      pointsUsed: 200,
-      date: '2025/08/07 16:20',
-      rating: 5,
-      satisfaction: 'excellent'
-    }
-  ]);
+  const [chatHistory] = useState<ChatHistory[]>([]);
 
   useEffect(() => {
     fetchUserData();
@@ -316,7 +285,7 @@ export default function DashboardPage() {
                 <div className="bg-purple-50 border border-purple-200 p-4 rounded-lg">
                   <div className="text-purple-600 text-sm mb-1">累計利用</div>
                   <div className="text-xl font-bold text-purple-800">{user.totalUsed.toLocaleString()} pt</div>
-                  <div className="text-xs text-purple-600 mt-1">登録から{chatHistory.length + 5}回</div>
+                  <div className="text-xs text-purple-600 mt-1">登録から{chatHistory.length}回</div>
                 </div>
               </div>
 
@@ -332,33 +301,45 @@ export default function DashboardPage() {
                   </button>
                 </div>
                 <div className="space-y-3">
-                  {chatHistory.slice(0, 3).map((chat) => (
-                    <div key={chat.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                      <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <div>
-                            <div className="font-medium text-gray-900 text-sm">{chat.fortuneTellerName}</div>
-                            <div className="text-xs text-gray-700">{chat.chatType} • {chat.duration}分</div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-medium text-red-600">-{chat.pointsUsed} pt</div>
-                            <div className="flex items-center space-x-1">
-                              {[...Array(5)].map((_, i) => (
-                                <svg key={i} className={`w-3 h-3 ${i < (chat.rating || 0) ? 'text-yellow-400' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 24 24">
-                                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                </svg>
-                              ))}
+                  {chatHistory.length > 0 ? (
+                    chatHistory.slice(0, 3).map((chat) => (
+                      <div key={chat.id} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                          <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <div className="font-medium text-gray-900 text-sm">{chat.fortuneTellerName}</div>
+                              <div className="text-xs text-gray-700">{chat.chatType} • {chat.duration}分</div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-sm font-medium text-red-600">-{chat.pointsUsed} pt</div>
+                              <div className="flex items-center space-x-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <svg key={i} className={`w-3 h-3 ${i < (chat.rating || 0) ? 'text-yellow-400' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                  </svg>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-500 text-sm">まだチャット履歴がありません</p>
+                      <p className="text-gray-400 text-xs mt-1">占いチャットを始めてみましょう</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
 
@@ -374,7 +355,8 @@ export default function DashboardPage() {
                   </button>
                 </div>
                 <div className="space-y-2">
-                  {user.transactions.slice(0, 5).map((transaction) => (
+                  {user.transactions && user.transactions.length > 0 ? (
+                    user.transactions.slice(0, 5).map((transaction) => (
                     <div key={transaction.id} className="flex justify-between items-center py-2">
                       <div className="flex items-center space-x-3">
                         <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -414,7 +396,18 @@ export default function DashboardPage() {
                         {transaction.amount.toLocaleString()} pt
                       </div>
                     </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg">
+                      <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002 2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-500 text-sm">まだ取引履歴がありません</p>
+                      <p className="text-gray-400 text-xs mt-1">ポイントを購入して占いを始めましょう</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -425,7 +418,8 @@ export default function DashboardPage() {
               <div className="bg-white border border-gray-200 rounded-lg p-4">
                 <h3 className="text-lg font-bold text-gray-900 mb-4">チャット履歴</h3>
                 <div className="space-y-4">
-                  {chatHistory.map((chat) => (
+                  {chatHistory.length > 0 ? (
+                    chatHistory.map((chat) => (
                     <div key={chat.id} className="border border-gray-200 rounded-lg p-4">
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -445,7 +439,24 @@ export default function DashboardPage() {
                         </div>
                       </div>
                     </div>
-                  ))}
+                    ))
+                  ) : (
+                    <div className="text-center py-12 bg-gray-50 rounded-lg">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                      </div>
+                      <h4 className="text-lg font-medium text-gray-900 mb-2">チャット履歴がありません</h4>
+                      <p className="text-gray-500 text-sm mb-4">占い師とのチャットをして履歴を作成しましょう</p>
+                      <button
+                        onClick={() => router.push('/chat')}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        占いチャットを始める
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
