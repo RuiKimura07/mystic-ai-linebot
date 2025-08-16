@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
@@ -67,6 +67,10 @@ export async function GET(request: NextRequest) {
     logger.info('User logged in successfully', { userId: user.id, lineUserId: user.lineUserId });
     
     // Create JWT token
+    const signOptions: SignOptions = {
+      expiresIn: '7d',
+    };
+    
     const token = jwt.sign(
       {
         userId: user.id,
@@ -75,9 +79,7 @@ export async function GET(request: NextRequest) {
         role: user.role,
       },
       env.JWT_SECRET,
-      {
-        expiresIn: env.JWT_EXPIRES_IN as string | number,
-      }
+      signOptions
     );
     
     // Set cookie and redirect
