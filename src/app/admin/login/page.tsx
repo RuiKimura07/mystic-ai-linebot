@@ -15,22 +15,28 @@ export default function AdminLoginPage() {
     setError('');
     setIsLoading(true);
 
-    // デモモード：任意のメール/パスワードで管理者としてログイン
-    if (email && password) {
-      const mockAdmin = {
-        id: 'admin-001',
-        name: '管理者',
-        email: email,
-        role: 'admin' as const,
-      };
-      
-      localStorage.setItem('demo-auth', JSON.stringify(mockAdmin));
-      
-      setTimeout(() => {
+    try {
+      const response = await fetch('/api/admin/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // ログイン成功
         router.push('/admin/users');
-      }, 500);
-    } else {
-      setError('メールアドレスとパスワードを入力してください');
+      } else {
+        setError(data.error || 'ログインに失敗しました');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('ログイン処理中にエラーが発生しました');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -117,12 +123,6 @@ export default function AdminLoginPage() {
               </ul>
             </div>
             
-            {/* デモモード表示 */}
-            <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-xs text-yellow-700 text-center">
-                デモモード：任意のメール/パスワードでログインできます
-              </p>
-            </div>
           </div>
         </div>
       </div>

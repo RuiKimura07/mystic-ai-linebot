@@ -14,6 +14,7 @@ model User {
   pictureUrl        String?
   email             String?
   statusMessage     String?
+  passwordHash      String?  // 管理者ログイン用パスワードハッシュ
   
   // ポイント管理
   balance           Int      @default(0)
