@@ -5,7 +5,7 @@ import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2024-06-20' as Stripe.LatestApiVersion,
 });
 
 export async function GET(request: NextRequest) {

@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2024-06-20' as Stripe.LatestApiVersion,
 });
 
 // Stripe Webhook処理
