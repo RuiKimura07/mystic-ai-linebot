@@ -50,6 +50,8 @@ export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'history' | 'profile'>('overview');
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -96,6 +98,33 @@ export default function DashboardPage() {
       console.error('Logout error:', error);
     } finally {
       router.push('/login');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        // 削除成功 - ログインページにリダイレクト
+        router.push('/login?deleted=true');
+      } else {
+        setError(data.error || 'アカウント削除に失敗しました');
+      }
+    } catch (error) {
+      console.error('Delete account error:', error);
+      setError('アカウント削除処理中にエラーが発生しました');
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -527,6 +556,25 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
+              
+              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">アカウント設定</h3>
+                <div className="space-y-4">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <h4 className="text-red-800 font-medium mb-2">アカウントの削除</h4>
+                    <p className="text-red-700 text-sm mb-4">
+                      アカウントを削除すると、すべてのデータが完全に削除され、復旧できません。
+                      この操作は取り消すことができませんので、慎重にお考えください。
+                    </p>
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors"
+                    >
+                      アカウントを削除
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -632,6 +680,72 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* アカウント削除確認モーダル */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full">
+            <div className="p-6">
+              <div className="flex items-center mb-4">
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">アカウント削除の確認</h3>
+              </div>
+              
+              <div className="mb-6">
+                <p className="text-gray-700 mb-4">
+                  本当にアカウントを削除しますか？この操作により以下のデータがすべて削除されます：
+                </p>
+                <ul className="text-sm text-gray-600 space-y-1 mb-4">
+                  <li>• アカウント情報（名前、メールアドレス等）</li>
+                  <li>• ポイント残高（現在：{user?.balance.toLocaleString()} pt）</li>
+                  <li>• 取引履歴</li>
+                  <li>• チャット履歴</li>
+                  <li>• その他すべての関連データ</li>
+                </ul>
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-yellow-800 text-sm font-medium">
+                    ⚠️ この操作は取り消すことができません
+                  </p>
+                </div>
+              </div>
+              
+              {error && (
+                <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-800 text-sm">{error}</p>
+                </div>
+              )}
+              
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  キャンセル
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                >
+                  {isDeleting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      削除中...
+                    </>
+                  ) : (
+                    'アカウントを削除'
+                  )}
+                </button>
               </div>
             </div>
           </div>

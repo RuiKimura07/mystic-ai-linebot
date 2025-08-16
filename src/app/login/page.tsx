@@ -1,10 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import LineContainer from '@/components/LineContainer';
 import LineButton from '@/components/LineButton';
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
+  const [showDeleteMessage, setShowDeleteMessage] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('deleted') === 'true') {
+      setShowDeleteMessage(true);
+      // 5秒後にメッセージを非表示
+      setTimeout(() => setShowDeleteMessage(false), 5000);
+    }
+  }, [searchParams]);
+
   const handleLineLogin = () => {
     const channelId = process.env.NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID || process.env.NEXT_PUBLIC_LINE_CHANNEL_ID;
     const redirectUri = process.env.NEXT_PUBLIC_LINE_REDIRECT_URI;
@@ -28,6 +40,22 @@ export default function LoginPage() {
   return (
     <LineContainer>
       <div className="flex flex-col h-screen">
+        {/* 削除完了メッセージ */}
+        {showDeleteMessage && (
+          <div className="bg-green-50 border border-green-200 p-4 m-4 rounded-lg">
+            <div className="flex items-center">
+              <div className="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <p className="text-green-800 text-sm font-medium">
+                アカウントが正常に削除されました。ご利用ありがとうございました。
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* ヘッダー */}
         <div className="text-center py-8 px-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">占いの小窓</h1>
