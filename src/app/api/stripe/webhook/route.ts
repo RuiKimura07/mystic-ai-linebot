@@ -81,6 +81,10 @@ async function handlePaymentSuccess(session: any) {
     const newBalance = user.balance + points;
     const newTotalPurchased = user.totalPurchased + points;
 
+    // 6ヶ月の有効期限を設定
+    const expirationDate = new Date();
+    expirationDate.setMonth(expirationDate.getMonth() + 6);
+
     // トランザクションで更新
     const [transaction, updatedUser] = await prisma.$transaction([
       prisma.transaction.create({
@@ -93,6 +97,7 @@ async function handlePaymentSuccess(session: any) {
           balanceAfter: newBalance,
           stripePaymentId: session.payment_intent,
           stripeSessionId: session.id,
+          expiresAt: expirationDate,
         },
       }),
       prisma.user.update({
@@ -114,9 +119,15 @@ async function handlePaymentSuccess(session: any) {
 
     // LINE通知送信
     if (lineUserId) {
+      const expirationDateString = expirationDate.toLocaleDateString('ja-JP', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
       const message = {
         type: 'text',
-        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${session.amount_total.toLocaleString()}\n💎 現在の残高: ${newBalance.toLocaleString()}pt\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${env.APP_URL}/chat`
+        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${session.amount_total.toLocaleString()}\n💎 現在の残高: ${newBalance.toLocaleString()}pt\n⏰ 有効期限: ${expirationDateString}まで\n\n※購入ポイントの有効期限は6ヶ月です\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${env.APP_URL}/chat`
       };
 
       try {

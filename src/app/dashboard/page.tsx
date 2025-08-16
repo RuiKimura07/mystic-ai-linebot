@@ -8,13 +8,15 @@ import LineButton from '@/components/LineButton';
 
 interface Transaction {
   id: string;
-  type: 'PURCHASE' | 'USAGE' | 'BONUS' | 'ADJUSTMENT';
+  type: 'PURCHASE' | 'USAGE' | 'BONUS' | 'ADJUSTMENT' | 'EXPIRATION';
   amount: number;
   description: string;
   createdAt: string;
   balanceBefore: number;
   balanceAfter: number;
   stripePaymentId?: string;
+  expiresAt?: string;
+  isExpired?: boolean;
 }
 
 interface User {
@@ -51,6 +53,7 @@ export default function DashboardPage() {
   const [showAllTransactions, setShowAllTransactions] = useState(false);
   const [showChatHistory, setShowChatHistory] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showExpirationModal, setShowExpirationModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -161,6 +164,23 @@ export default function DashboardPage() {
   };
 
   const thisMonthStats = getThisMonthStats();
+
+  const getExpirationInfo = () => {
+    if (!user?.transactions) return [];
+    
+    // 購入トランザクションで期限切れでないものを取得
+    const activeTransactions = user.transactions
+      .filter(t => t.type === 'PURCHASE' && !t.isExpired && t.expiresAt)
+      .map(t => ({
+        amount: t.amount,
+        purchaseDate: new Date(t.createdAt),
+        expirationDate: new Date(t.expiresAt!),
+        daysRemaining: Math.ceil((new Date(t.expiresAt!).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+      }))
+      .sort((a, b) => a.expirationDate.getTime() - b.expirationDate.getTime());
+    
+    return activeTransactions;
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -292,9 +312,15 @@ export default function DashboardPage() {
               {/* 残高表示 */}
               <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-4 rounded-lg">
                 <div className="flex justify-between items-center">
-                  <div>
+                  <div className="flex-1">
                     <div className="text-sm opacity-90 mb-1">現在の残高</div>
-                    <div className="text-3xl font-bold">{user.balance.toLocaleString()} pt</div>
+                    <div className="text-3xl font-bold mb-2">{user.balance.toLocaleString()} pt</div>
+                    <button
+                      onClick={() => setShowExpirationModal(true)}
+                      className="bg-white bg-opacity-20 hover:bg-opacity-30 px-3 py-1 rounded-full text-xs font-medium transition-colors"
+                    >
+                      📅 ポイント有効期限
+                    </button>
                   </div>
                   <div className="text-right">
                     <svg className="w-10 h-10 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -747,6 +773,112 @@ export default function DashboardPage() {
                   )}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ポイント有効期限モーダル */}
+      {showExpirationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[80vh] overflow-hidden">
+            <div className="flex justify-between items-center p-4 border-b">
+              <h2 className="text-xl font-bold text-gray-900">ポイント有効期限</h2>
+              <button
+                onClick={() => setShowExpirationModal(false)}
+                className="text-gray-600 hover:text-gray-700"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-[60vh] p-4">
+              {(() => {
+                const expirationInfo = getExpirationInfo();
+                if (expirationInfo.length === 0) {
+                  return (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-500">有効期限のあるポイントはありません</p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="space-y-3">
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                      <p className="text-blue-800 text-sm">
+                        ポイントの有効期限は購入から6ヶ月です。
+                        期限が近いポイントから自動的に使用されます。
+                      </p>
+                    </div>
+                    
+                    {expirationInfo.map((item, index) => {
+                      const isExpiringSoon = item.daysRemaining <= 30;
+                      const isExpired = item.daysRemaining <= 0;
+                      
+                      return (
+                        <div
+                          key={index}
+                          className={`border rounded-lg p-4 ${
+                            isExpired ? 'border-red-300 bg-red-50' :
+                            isExpiringSoon ? 'border-yellow-300 bg-yellow-50' :
+                            'border-gray-200 bg-white'
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <div className="font-medium text-gray-900">
+                                {item.amount.toLocaleString()} pt
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                購入日: {item.purchaseDate.toLocaleDateString('ja-JP')}
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className={`text-sm font-medium ${
+                                isExpired ? 'text-red-600' :
+                                isExpiringSoon ? 'text-yellow-600' :
+                                'text-green-600'
+                              }`}>
+                                {isExpired ? '期限切れ' :
+                                 isExpiringSoon ? `あと${item.daysRemaining}日` :
+                                 `${item.daysRemaining}日`}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {item.expirationDate.toLocaleDateString('ja-JP')}まで
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {isExpiringSoon && !isExpired && (
+                            <div className="mt-2 flex items-center text-yellow-700 text-xs">
+                              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                              </svg>
+                              まもなく有効期限を迎えます
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                    
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">有効ポイント合計</span>
+                        <span className="font-bold text-gray-900">
+                          {expirationInfo.reduce((sum, item) => sum + item.amount, 0).toLocaleString()} pt
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>

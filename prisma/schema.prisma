@@ -55,11 +55,18 @@ model Transaction {
   balanceBefore     Int
   balanceAfter      Int
   
+  // ポイント有効期限（購入ポイントのみ）
+  expiresAt         DateTime?
+  isExpired         Boolean  @default(false)
+  expiredAt         DateTime?
+  
   createdAt         DateTime @default(now())
   
   @@index([userId])
   @@index([type])
   @@index([createdAt])
+  @@index([expiresAt])
+  @@index([isExpired])
 }
 
 model ChatSession {
@@ -102,6 +109,8 @@ enum TransactionType {
   USAGE        // ポイント使用
   ADJUSTMENT   // 管理者による調整
   REFUND       // 返金
+  BONUS        // ボーナス
+  EXPIRATION   // 有効期限切れ
 }
 
 enum ChatStatus {
