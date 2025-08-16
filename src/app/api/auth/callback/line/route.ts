@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
     );
     
     // Set cookie and redirect
-    const dashboardUrl = new URL('/dashboard', request.url);
+    const dashboardUrl = new URL('/dashboard', env.APP_URL);
     const response = NextResponse.redirect(dashboardUrl);
     
     // Get domain from request URL for cookie domain
@@ -91,18 +91,25 @@ export async function GET(request: NextRequest) {
     const cookieOptions = {
       httpOnly: false, // 一時的にfalseに設定（本番環境ではtrueにすべき）
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
+      sameSite: env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: '/',
-      // Add domain for production
-      ...(env.NODE_ENV === 'production' && { domain: url.hostname }),
+      // Remove explicit domain to see if that helps
     };
     
+    // Try both methods of setting cookies
     response.cookies.set('auth-token', token, cookieOptions);
+    
+    // Also try setting via Set-Cookie header directly
+    const cookieString = `auth-token=${token}; Path=/; Max-Age=${60 * 60 * 24 * 7}; ${
+      env.NODE_ENV === 'production' ? 'Secure; SameSite=None' : 'SameSite=Lax'
+    }`;
+    response.headers.append('Set-Cookie', cookieString);
     
     logger.info('Setting auth cookie', { 
       userId: user.id, 
       cookieOptions,
+      cookieString,
       redirectUrl: dashboardUrl.toString(),
       tokenLength: token.length 
     });
