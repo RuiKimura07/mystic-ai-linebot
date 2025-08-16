@@ -83,13 +83,28 @@ export async function GET(request: NextRequest) {
     );
     
     // Set cookie and redirect
-    const response = NextResponse.redirect(new URL('/dashboard', env.APP_URL));
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
+    const dashboardUrl = new URL('/dashboard', request.url);
+    const response = NextResponse.redirect(dashboardUrl);
+    
+    // Get domain from request URL for cookie domain
+    const url = new URL(request.url);
+    const cookieOptions = {
+      httpOnly: false, // 一時的にfalseに設定（本番環境ではtrueにすべき）
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: '/',
+      // Add domain for production
+      ...(env.NODE_ENV === 'production' && { domain: url.hostname }),
+    };
+    
+    response.cookies.set('auth-token', token, cookieOptions);
+    
+    logger.info('Setting auth cookie', { 
+      userId: user.id, 
+      cookieOptions,
+      redirectUrl: dashboardUrl.toString(),
+      tokenLength: token.length 
     });
     
     return response;

@@ -93,7 +93,9 @@ export default function DashboardPage() {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/user');
+      const response = await fetch('/api/user', {
+        credentials: 'include', // クッキーを含める
+      });
       
       if (response.status === 401) {
         router.push('/login');
@@ -116,7 +118,10 @@ export default function DashboardPage() {
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include', // クッキーを含める
+      });
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

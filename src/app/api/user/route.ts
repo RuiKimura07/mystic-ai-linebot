@@ -6,15 +6,24 @@ import { logger } from '@/lib/logger';
 
 export async function GET(request: NextRequest) {
   try {
+    // Debug: Log all cookies
+    logger.info('API /user request cookies:', {
+      allCookies: request.headers.get('cookie'),
+      authTokenExists: !!request.cookies.get('auth-token'),
+    });
+    
     // Get auth token from cookie
     const token = request.cookies.get('auth-token')?.value;
     
     if (!token) {
+      logger.warn('No auth token found in cookies');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     
     // Verify JWT token
+    logger.info('Attempting to verify JWT token', { tokenLength: token.length });
     const decoded = jwt.verify(token, env.JWT_SECRET) as any;
+    logger.info('JWT token verified successfully', { userId: decoded.userId });
     
     // Get user from database
     const user = await prisma.user.findUnique({

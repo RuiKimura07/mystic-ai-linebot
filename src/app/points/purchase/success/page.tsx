@@ -22,7 +22,9 @@ function PurchaseSuccessContent() {
       }
 
       try {
-        const response = await fetch(`/api/stripe/verify-purchase?session_id=${sessionId}`);
+        const response = await fetch(`/api/stripe/verify-purchase?session_id=${sessionId}`, {
+          credentials: 'include', // クッキーを含める
+        });
         
         if (response.status === 401) {
           router.push('/login');

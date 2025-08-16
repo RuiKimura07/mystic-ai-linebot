@@ -45,7 +45,9 @@ export default function PointsPurchasePage() {
   const fetchUserData = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/user');
+      const response = await fetch('/api/user', {
+        credentials: 'include', // クッキーを含める
+      });
       
       if (response.status === 401) {
         router.push('/login');
@@ -86,6 +88,7 @@ export default function PointsPurchasePage() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // クッキーを含める
         body: JSON.stringify({
           planId: selectedPlan,
         }),
