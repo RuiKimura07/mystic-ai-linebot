@@ -1,5 +1,5 @@
 import { prisma } from './prisma';
-import { Prisma } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 // 最適化されたユーザー取得クエリ
 export async function getUserWithBalance(userId: string) {
@@ -43,7 +43,7 @@ export async function getUserWithBalance(userId: string) {
 export async function createTransactionWithBalanceUpdate(
   userId: string,
   transactionData: {
-    type: string;
+    type: 'PURCHASE' | 'USAGE' | 'ADJUSTMENT' | 'REFUND' | 'BONUS' | 'EXPIRATION';
     amount: number;
     description: string;
     stripePaymentId?: string;
@@ -228,7 +228,7 @@ export async function getPaginatedUsers(
 }
 
 // コネクションプール最適化設定
-export const optimizedPrisma = new Prisma.PrismaClient({
+export const optimizedPrisma = new PrismaClient({
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   datasources: {
     db: {
