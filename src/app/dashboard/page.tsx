@@ -94,10 +94,6 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       
-      // Debug: Check if cookies exist on client side
-      console.log('Client-side cookies:', document.cookie);
-      console.log('Auth token exists:', document.cookie.includes('auth-token'));
-      
       const response = await fetch('/api/user', {
         credentials: 'include', // クッキーを含める
       });

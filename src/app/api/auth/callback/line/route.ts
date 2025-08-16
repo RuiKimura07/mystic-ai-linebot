@@ -110,29 +110,20 @@ export async function GET(request: NextRequest) {
     // Get domain from request URL for cookie domain
     const url = new URL(request.url);
     const cookieOptions = {
-      httpOnly: false, // 一時的にfalseに設定（本番環境ではtrueにすべき）
+      httpOnly: true, // 本番環境ではtrueにしてセキュリティを強化
       secure: env.NODE_ENV === 'production',
       sameSite: env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
       maxAge: 60 * 60 * 24 * 7, // 7 days
       path: '/',
-      // Remove explicit domain to see if that helps
     };
     
-    // Try both methods of setting cookies
+    // Set authentication cookie
     response.cookies.set('auth-token', token, cookieOptions);
     
-    // Also try setting via Set-Cookie header directly
-    const cookieString = `auth-token=${token}; Path=/; Max-Age=${60 * 60 * 24 * 7}; ${
-      env.NODE_ENV === 'production' ? 'Secure; SameSite=None' : 'SameSite=Lax'
-    }`;
-    response.headers.append('Set-Cookie', cookieString);
-    
-    logger.info('Setting auth cookie', { 
+    logger.info('User authentication successful', { 
       userId: user.id, 
-      cookieOptions,
-      cookieString,
-      redirectUrl: dashboardUrl.toString(),
-      tokenLength: token.length 
+      lineUserId: user.lineUserId,
+      redirectUrl: dashboardUrl.toString()
     });
     
     return response;
