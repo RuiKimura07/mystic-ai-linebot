@@ -32,11 +32,15 @@ export default function AdminLoginPage() {
       if (response.ok) {
         // ログイン成功
         console.log('Login successful, waiting before redirect to ensure cookie is set');
+        
         // クッキーが確実に設定されるまで少し待機
         setTimeout(() => {
+          console.log('Checking cookies before redirect:');
+          console.log('- All cookies:', document.cookie);
+          console.log('- Admin token exists:', document.cookie.includes('admin-token'));
           console.log('Redirecting to /admin/users');
           router.push('/admin/users');
-        }, 500);
+        }, 1000); // 1秒に延長
       } else {
         console.error('Login failed:', { status: response.status, data });
         setError(`ログインエラー (${response.status}): ${data.error || 'ログインに失敗しました'}`);

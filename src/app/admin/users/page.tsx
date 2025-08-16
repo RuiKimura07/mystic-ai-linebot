@@ -70,9 +70,15 @@ export default function AdminUsersPage() {
 
   const checkAdminAuth = async () => {
     try {
+      console.log('Admin page: checking auth');
+      console.log('- All cookies:', document.cookie);
+      console.log('- Admin token exists:', document.cookie.includes('admin-token'));
+      
       const response = await fetch('/api/admin/check-auth', {
         credentials: 'include',
       });
+      
+      console.log('Auth check response:', response.status);
       
       if (response.status === 401 || response.status === 403) {
         router.push('/admin/login');

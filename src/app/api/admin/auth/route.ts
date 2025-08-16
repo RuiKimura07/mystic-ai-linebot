@@ -99,12 +99,20 @@ export async function POST(request: NextRequest) {
       },
     });
     
-    response.cookies.set('admin-token', token, {
-      httpOnly: true,
+    const cookieOptions = {
+      httpOnly: false, // 一時的にfalseでデバッグ
       secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: 'lax' as const,
       maxAge: 60 * 60 * 8, // 8 hours
-      path: '/admin',
+      path: '/', // パスをルートに変更
+    };
+    
+    response.cookies.set('admin-token', token, cookieOptions);
+    
+    logger.info('Setting admin cookie', { 
+      cookieOptions,
+      tokenLength: token.length,
+      userId: user.id 
     });
     
     logger.info('Admin user logged in successfully', {
