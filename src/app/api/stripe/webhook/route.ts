@@ -116,7 +116,7 @@ async function handlePaymentSuccess(session: any) {
     if (lineUserId) {
       const message = {
         type: 'text',
-        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${(session.amount_total / 100).toLocaleString()}\n💎 現在の残高: ${newBalance.toLocaleString()}pt\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${env.APP_URL}/chat`
+        text: `🎉 ポイント購入完了！\n\n💳 購入ポイント: ${points.toLocaleString()}pt\n💰 決済金額: ¥${session.amount_total.toLocaleString()}\n💎 現在の残高: ${newBalance.toLocaleString()}pt\n\nすぐに占いチャットをお楽しみいただけます！\n\n👉 チャット開始: ${env.APP_URL}/chat`
       };
 
       try {

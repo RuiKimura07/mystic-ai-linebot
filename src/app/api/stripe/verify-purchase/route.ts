@@ -37,11 +37,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Payment not completed' }, { status: 400 });
     }
 
-    // 購入詳細を返す
+    // 購入詳細を返す（日本円の場合はamount_totalは既に円単位）
     const purchaseDetails = {
       sessionId: session.id,
       points: parseInt(session.metadata?.points || '0'),
-      amount: session.amount_total ? session.amount_total / 100 : 0,
+      amount: session.amount_total || 0,
       currency: session.currency,
       status: session.payment_status,
       date: new Date(session.created * 1000).toLocaleString('ja-JP'),
